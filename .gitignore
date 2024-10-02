@@ -1,0 +1,14 @@
+# Node modules
+nextjs/node_modules/
+nextjs/.next/
+
+# PocketBase data
+pocketbase/pb_data/
+
+# Docker
+*.log
+docker-compose.override.yml
+
+# System files
+.DS_Store
+
