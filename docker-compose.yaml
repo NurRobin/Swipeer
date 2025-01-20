@@ -1,27 +1,30 @@
-version: '3.8'
-
 services:
   nextjs:
+    container_name: swipeerde_nextjs
     build:
       context: ./nextjs
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - "3050:3000"
     volumes:
       - ./nextjs:/app
     environment:
-      - NEXT_PUBLIC_POCKETBASE_URL=http://localhost:8090
+      - NEXT_PUBLIC_POCKETBASE_URL=http://localhost:8140
     depends_on:
       - pocketbase
 
   pocketbase:
-    build:
-      context: ./pocketbase
-      dockerfile: Dockerfile
+    image: ghcr.io/muchobien/pocketbase:latest
+    container_name: swipeerde_pocketbase
+    restart: unless-stopped
     ports:
-      - "8090:8090"
+      - "8140:8090"
     volumes:
-      - ./pocketbase/pb_data:/pb/pb_data
-    environment:
-      - POCKETBASE_DATA=/pb/pb_data
-
+      - ./pocketbase/pb_data:/pb_data
+      - ./pocketbase/pb_public:/pb_public
+      - ./pocketbase/pb_hooks:/pb_hooks
+    healthcheck: #optional (recommended) since v0.10.0
+      test: wget --no-verbose --tries=1 --spider http://localhost:8090/api/health || exit 1
+      interval: 5s
+      timeout: 5s
+      retries: 5
