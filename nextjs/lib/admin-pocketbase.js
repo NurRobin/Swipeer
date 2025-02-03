@@ -4,7 +4,9 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const pb = new PocketBase('http://localhost:8140');
+const pocketbase_url = process.env.POCKETBASE_URL || 'http://localhost:8140';
+
+const pb = new PocketBase(pocketbase_url);
 
 // Auto-Cancellation deaktivieren
 pb.autoCancellation = false;
