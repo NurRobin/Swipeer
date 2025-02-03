@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const pocketbase_url = process.env.POCKETBASE_URL || 'http://localhost:8140';
-console.debug('Loaded PocketBase with URL:', pocketbase_url);
+console.debug('Loaded Admin-PocketBase with URL:', pocketbase_url);
 
 const pb = new PocketBase(pocketbase_url);
 
