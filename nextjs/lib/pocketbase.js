@@ -1,8 +1,8 @@
 // lib/pocketbase.js
 import PocketBase from 'pocketbase';
-import dotenv from 'dotenv';
 
-const pocketbase_url = process.env.POCKETBASE_URL || 'http://localhost:8140';
+// Wenn das Projekt lokal ohne Internetverbindung läuft muss die URL angepasst werden auf 'http://localhost:8140'
+const pocketbase_url = 'https://data.swipeer.de';
 
 console.debug('Loaded PocketBase with URL:', pocketbase_url);
 
