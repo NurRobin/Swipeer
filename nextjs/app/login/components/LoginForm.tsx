@@ -9,7 +9,7 @@ export default function LoginForm() {
     const [error, setError] = useState('');
     const router = useRouter();
     const searchParams = useSearchParams();
-    const callbackUrl = searchParams.get('callbackUrl') || '/';
+    const callbackUrl = searchParams?.get('callbackUrl') || '/';
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
