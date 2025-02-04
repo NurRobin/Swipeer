@@ -4,6 +4,8 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import LoginForm from '../components/LoginForm';
 import SignupForm from '../components/SignupForm';
+import Dashboard from "@/app/dashboard/page";
+import Survey from "@/app/survey/page";
 
 const HomePage: React.FC = () => {
   const [showLogin, setShowLogin] = useState(true);
@@ -11,6 +13,8 @@ const HomePage: React.FC = () => {
   const toggleForm = () => {
     setShowLogin(!showLogin);
   };
+
+  return <Survey />;
 
   return (
     <div className="home-page">
@@ -21,7 +25,7 @@ const HomePage: React.FC = () => {
         <p>
           {showLogin ? (
             <>
-              Don't have an account?{' '}
+              Don&#39;t have an account?{' '}
               <button onClick={toggleForm} className="toggle-button">
                 Sign up
               </button>

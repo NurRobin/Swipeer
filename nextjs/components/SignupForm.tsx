@@ -28,7 +28,7 @@ const SignupForm: React.FC = () => {
         emailVisibility: true,
         password,
         passwordConfirm: confirmPassword,
-        name: fullName,
+        display_name: fullName,
       });
       // Redirect to login page after successful signup
       router.push('/');

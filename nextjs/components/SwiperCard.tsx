@@ -1,46 +1,77 @@
-// src/components/SwiperCard.tsx
-import React, { useState, useEffect } from 'react';
+import React, { useState } from "react";
+import { useSpring, animated } from "@react-spring/web";
+import { useDrag } from "@use-gesture/react";
 
-interface SwiperCardProps {
-  data: {
-    id: string;
-    title: string;
-    description: string;
-    spotifyTrackId?: string;
-  };
-  onSwipe: (direction: string, cardId: string) => void;
+// Definieren der Props-Klasse (Interface)
+interface SwipeableCardProps {
+    content: string; // Der Inhalt der Karte
+    onLike: (content: string) => void; // Funktion, die aufgerufen wird, wenn die Karte nach rechts geswiped wird
+    onDislike: (content: string) => void; // Funktion, die aufgerufen wird, wenn die Karte nach links geswiped wird
 }
 
-const SwiperCard: React.FC<SwiperCardProps> = ({ data, onSwipe }) => {
-  const [trackData, setTrackData] = useState<any>(null);
+const SwipeableCard: React.FC<SwipeableCardProps> = ({ content, onLike, onDislike }) => {
+    const [gone, setGone] = useState(false); // Überprüft, ob die Karte bereits geswiped wurde
+    const [{ x, y, rotation, opacity }, set] = useSpring(() => ({
+        x: 0, // Startwert für die X-Position
+        y: 0, // Startwert für die Y-Position
+        rotation: 0, // Startwert für die Rotation
+        opacity: 1, // Startwert für die Opazität
+    }));
 
-  useEffect(() => {
-    if (data.spotifyTrackId) {
-      fetch(`/api/spotify?trackId=${data.spotifyTrackId}`)
-        .then((res) => res.json())
-        .then((data) => setTrackData(data))
-        .catch((error) => console.error(error));
-    }
-  }, [data.spotifyTrackId]);
+    const dragThreshold = 350; // Der Schwellenwert, ab dem die Karte als geswiped gilt (nach links oder rechts)
 
-  return (
-    <div className="card">
-      <h3>{data.title}</h3>
-      <p>{data.description}</p>
-      {trackData && (
-        <div>
-          <img src={trackData.album.images[0].url} alt={trackData.name} />
-          <audio controls src={trackData.preview_url}>
-            Your browser does not support the audio element.
-          </audio>
-        </div>
-      )}
-      <div>
-        <button onClick={() => onSwipe('left', data.id)}>No</button>
-        <button onClick={() => onSwipe('right', data.id)}>Yes</button>
-      </div>
-    </div>
-  );
+    const bind = useDrag(
+        (state) => {
+
+
+            const { offset: [xOffset, yOffset], movement: [mx], direction: [dir] } = state;
+
+            // Berechnung der Rotation und Position der Karte
+            set({
+                x: xOffset, // Horizontalbewegung
+                y: xOffset < 0 ? xOffset * 0.7 : xOffset * -0.7, // Vertikale Verschiebung (Abwärtsbewegung)
+                rotation: mx / 10, // Drehung basierend auf der horizontalen Bewegung (anpassen der Intensität)
+                opacity: 1 - clamp((Math.abs(xOffset) - (dragThreshold - 100)) / 100, 0, 1), // Die Karte wird transparenter, je weiter sie geswiped wird
+            });
+
+            // Wenn der Swipe weit genug ist, führe eine Funktion aus
+            if (Math.abs(xOffset) > dragThreshold) {
+                if (dir > 0) {
+                    onLike(content); // Wenn nach rechts geswiped, "like"
+                } else {
+                    onDislike(content); // Wenn nach links geswiped, "dislike"
+                }
+                setGone(true); // Karte wird als geswiped markiert
+            }
+
+        },
+        { axis: "x" } // Der Swipe erfolgt nur auf der X-Achse
+    );
+
+
+
+    return (
+        <animated.div
+            {...bind()}
+            style={{
+                x,
+                y, // Abwärtsbewegung
+                rotate: rotation, // Drehung
+                opacity,
+                touchAction: "none", // Verhindert ungewollte Scrollbewegungen auf Touch-Geräten
+            }}
+            className="card"
+        >
+            <div className="card-content">{content}</div>
+        </animated.div>
+    );
 };
 
-export default SwiperCard;
+export default SwipeableCard;
+
+
+function clamp(value: number, min: number, max: number) {
+    if (value < min) return min;
+    if (value > max) return max;
+    return value;
+}
