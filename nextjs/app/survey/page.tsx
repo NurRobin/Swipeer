@@ -4,9 +4,13 @@ import React, {useState} from 'react';
 import "../../styles/surveyScreen.css"
 import "../../styles/swiperCard.css"
 import SwipeableCard from "@/components/SwiperCard";
+import TinderCard from 'react-tinder-card'
+
 
 const Survey: React.FC = () => {
-    const [cards,] = useState(["Karte 1", "Karte 2", "Karte 3", "Karte 4"]);
+
+
+    const [cards, setCards] = useState(["Karte 1", "Karte 2", "Karte 3", "Karte 4"]);
     const [currentIndex, setCurrentIndex] = useState(0); // Zeigt den Index der aktuellen Karte an
 
     const handleLike = (content: string) => {
@@ -24,6 +28,11 @@ const Survey: React.FC = () => {
             setCurrentIndex(currentIndex + 1); // Wechsle zur nächsten Karte
         }
     };
+
+    return <div className="card-container">
+        <TinderCard className="card" onSwipe={handleLike} onCardLeftScreen={() => handleDislike
+        ('fooBar')} preventSwipe={['right', 'left']}><p>{cards[currentIndex]}</p></TinderCard>
+    </div>
 
     return (
         <div className="card-container">
