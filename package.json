@@ -1,8 +1,0 @@
-{
-  "dependencies": {
-    "@react-spring/web": "^9.7.5",
-    "next": "^15.1.6",
-    "react-spring": "^9.7.5",
-    "react-tinder-card": "^1.6.4"
-  }
-}
