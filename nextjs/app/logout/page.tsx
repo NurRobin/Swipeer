@@ -14,8 +14,8 @@ export default function LogoutPage() {
     }, [router, callbackUrl]);
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-gray-100">
-            <p>Logging out...</p>
+        <div className="flex items-center justify-center min-h-screen bg-black-100">
+            <p className='text-white'>Logging out...</p>
         </div>
     );
 }
