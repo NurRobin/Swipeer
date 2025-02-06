@@ -17,7 +17,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
         if (invite.uses >= invite.max_uses) {
             console.warn(`Invite ${invite_id} has been used too many times`);
-            return NextResponse.json({ error: 'Invite has been used too many times' }, { status: 400 });
+            return NextResponse.json({ error: 'This invite has been used too many times.' }, { status: 400 });
         }
 
         const existingMember = await pb.collection('group_members').getFullList({
@@ -27,7 +27,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
         if (existingMember.length > 0) {
             console.warn(`User ${user_id} is already in group ${group_id}`);
-            return NextResponse.json({ error: 'User is already in the group' }, { status: 400 });
+            return NextResponse.json({ error: 'You are already a member of this group.' }, { status: 400 });
         }
 
         await pb.collection('group_members').create({
