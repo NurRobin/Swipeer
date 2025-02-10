@@ -31,6 +31,7 @@ const InvitePage: React.FC = () => {
     const [groupInfo, setGroupInfo] = useState<GroupInfo | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [showDialog, setShowDialog] = useState(false);
+    const [loading, setLoading] = useState(true);
     const hasFetched = useRef(false);
 
     useEffect(() => {
@@ -40,6 +41,7 @@ const InvitePage: React.FC = () => {
                     const record = await pb.collection('invite_links').getOne(id);
                     if (record.uses >= record.max_uses) {
                         setError('This invite has been used too many times.');
+                        setLoading(false);
                         return;
                     }
                     const inviteRecord: InviteRecord = {
@@ -62,12 +64,13 @@ const InvitePage: React.FC = () => {
                         throw new Error('Failed to fetch group info');
                     }
                     const data = await response.json();
-                    console.log('Group info:', data);
                     setGroupInfo(data);
                     setShowDialog(true);
                 } catch (error) {
                     console.error('Error fetching invite:', error);
                     setError('This invite does not exist.');
+                } finally {
+                    setLoading(false);
                 }
             }
         };
@@ -93,42 +96,55 @@ const InvitePage: React.FC = () => {
             });
 
             if (!response.ok) {
-                throw new Error('Failed to join group');
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Failed to join group');
             }
 
-            alert('Successfully joined the group!');
+            const result = await response.json();
+            if (result.success) {
+                router.push(`/group/${invite.group_id}`);
+            } else {
+                throw new Error(result.error || 'Failed to join group');
+            }
         } catch (error) {
             console.error('Error joining group:', error);
-            alert('Failed to join the group.');
+            if (error instanceof Error) {
+                setError(error.message);
+            } else {
+                setError('An unknown error occurred');
+            }
         }
     };
 
-    if (error) {
-        return <p>{error}</p>;
-    }
-
-    if (!invite || !groupInfo) {
-        return <p>Loading...</p>;
-    }
-
     return (
-        <div className="p-4">
-            <p>Einladungscode: {id}</p>
-            {/* Render invite details here */}
-            <pre><code>{JSON.stringify(invite, null, 2)}</code></pre>
-            {showDialog && (
-                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                    <div className="bg-white p-6 rounded-lg text-center">
-                        <h2 className="text-2xl font-bold">{groupInfo.name}</h2>
-                        <p className="mt-2">{groupInfo.description}</p>
-                        <p className="mt-2">Members: {groupInfo.member_count}</p>
-                        <button
-                            onClick={handleJoinGroup}
-                            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg"
-                        >
-                            Join Group
-                        </button>
-                    </div>
+        <div className="flex items-center justify-center min-h-screen p-4">
+            {loading && (
+                <div className="text-center">
+                    <p>Loading...</p>
+                </div>
+            )}
+            {!loading && error && (
+                <div className="bg-white p-6 rounded-lg text-center">
+                    <p className="text-red-500">{error}</p>
+                    <button
+                        onClick={() => setError(null)}
+                        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg"
+                    >
+                        Close
+                    </button>
+                </div>
+            )}
+            {!loading && !error && invite && groupInfo && (
+                <div className="bg-white p-6 rounded-lg text-center">
+                    <h2 className="text-2xl font-bold">{groupInfo.name}</h2>
+                    <p className="mt-2">{groupInfo.description}</p>
+                    <p className="mt-2">Members: {groupInfo.member_count}</p>
+                    <button
+                        onClick={handleJoinGroup}
+                        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg"
+                    >
+                        Join Group
+                    </button>
                 </div>
             )}
         </div>
