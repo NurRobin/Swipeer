@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import pb from '@/lib/pocketbase';
 import { useRouter } from 'next/navigation';
+import '@/styles/globals.css';
 
 const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
   const [group, setGroup] = useState<Group | null>(null);
@@ -101,6 +102,29 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   };
 
+  const handleLeaveGroup = async () => {
+    try {
+      const user = pb.authStore.model;
+
+      if (!user) {
+        console.error('No user is logged in.');
+        return;
+      }
+
+      const groupMembersRecord = await pb.collection('group_members').getFullList({
+        filter: `user_id = "${user.id}"`,
+      });
+
+      for (const record of groupMembersRecord) {
+        await pb.collection('group_members').delete(record.id);
+      }
+
+      console.log(`User ${user.email} successfully left the group.`);
+    } catch (error) {
+      console.error('Error leaving the group:', error);
+    }
+  };
+
   return (
     <div className="p-6 bg-white shadow-md rounded-lg max-w-4xl mx-auto">
       <h1 className="text-4xl font-bold mb-4 text-black">{group?.name}</h1>
@@ -117,6 +141,14 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
           </li>
         ))}
       </ul>
+      <div className="mt-6 flex justify-center">
+        <button
+          onClick={handleLeaveGroup}
+          className="w-full max-w-xs py-2 px-4 bg-primary-color text-white font-semibold rounded-md hover:bg-secondary-color focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-color"
+        >
+          Gruppe verlassen
+        </button>
+      </div>
     </div>
   );
 };
