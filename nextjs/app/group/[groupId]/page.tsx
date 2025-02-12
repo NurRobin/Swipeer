@@ -37,6 +37,7 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
 
         members.forEach((member, index) => {
           member.display_name = users[index].display_name;
+          member.role = member.role.charAt(0).toUpperCase() + member.role.slice(1);
         });
 
         // Sort members by "joined_at" date
@@ -51,7 +52,7 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
           members: members.map((member) => ({
             id: member.id,
             display_name: member.display_name,
-            role: member.user_id === group.created_by ? 'Admin' : 'Member',
+            role: member.role,
             email: member.email,
             created: member.created,
             updated: member.updated,
@@ -80,32 +81,57 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
   const handleLeaveGroup = async () => {
     try {
       const user = pb.authStore.model;
-
       if (!user) {
         setLeaveGroupError('You are not logged in. Please log in and try again.');
-        console.error('No user is logged in.');
         return;
       }
 
+      if (!group) return;
+
       const groupMembersRecord = await pb.collection('group_members').getFullList({
-        filter: `user_id = "${user.id}"`,
+        filter: `group_id = "${groupId}"`
       });
 
       if (groupMembersRecord.length === 0) {
         setLeaveGroupError('You are not a member of this group.');
-        console.warn('No group members found for the current user.');
         return;
       }
 
-      for (const record of groupMembersRecord) {
-        await pb.collection('group_members').delete(record.id);
+      const isAdmin = groupMembersRecord.some(member => member.user_id === user.id && member.role === 'admin');
+
+      if (isAdmin) {
+        if (groupMembersRecord.length === 1) {
+          const confirmDelete = confirm('You are the last member of this group. The group will be deleted if you leave. Do you want to proceed?');
+          if (confirmDelete) {
+            if (groupId) {
+              await pb.collection('groups').delete(groupId);
+              router.push('/');
+              return;
+            }
+          } else {
+            return;
+          }
+        } else {
+          const newAdmin = groupMembersRecord
+            .filter(member => member.user_id !== user.id)
+            .sort((a, b) => new Date(a.joined_at).getTime() - new Date(b.joined_at).getTime())[0];
+
+          if (newAdmin) {
+            await pb.collection('group_members').update(newAdmin.id, { role: 'admin' });
+          }
+        }
       }
 
-      console.log(`User ${user.email} successfully left the group.`);
+      for (const record of groupMembersRecord.filter(m => m.user_id === user.id)) {
+        try {
+          await pb.collection('group_members').delete(record.id);
+        } catch (error) {
+        }
+      }
+
       router.push('/');
     } catch (error) {
       setLeaveGroupError('An error occurred while trying to leave the group. Please try again later.');
-      console.error('Error leaving the group:', error);
     }
   };
 
@@ -161,7 +187,7 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
           onClick={handleLeaveGroup}
           className="w-full max-w-xs py-2 px-4 bg-primary-color text-white font-semibold rounded-md hover:bg-secondary-color focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-color"
         >
-          Gruppe verlassen
+          Leave group
         </button>
       </div>
     </div>
