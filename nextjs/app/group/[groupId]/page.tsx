@@ -145,7 +145,7 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
     }
   };
 
-  const handleGenerateInviteLink = async () => {
+  const handleGenerateInviteLink = async (isUnlimited: boolean) => {
     try {
       const user = pb.authStore.model;
       if (!user) {
@@ -161,12 +161,13 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
       await pb.collection('invite_links').create({
         group_id: groupId,
         created_by: user.id,
-        max_uses: maxUses ?? 1,
+        max_uses: isUnlimited ? null : maxUses ?? 1,
+        infinite: isUnlimited,
       });
 
       alert('Invite link generated successfully.');
       setShowModal(false);
-      setMaxUses(null); // Reset maxUses when closing the modal
+      setMaxUses(null);
     } catch (error) {
       console.error('Error generating invite link:', error);
       alert('An error occurred while generating the invite link. Please try again later.');
@@ -207,7 +208,7 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
             className="py-2 px-4 bg-primary-color text-white font-semibold rounded-md hover:bg-secondary-color focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-color w-auto"
             onClick={() => {
               setShowModal(true);
-              setMaxUses(null); // Reset maxUses when opening the modal
+              setMaxUses(null);
             }}
           >
             Generate Invite Link

@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 interface InviteLinkModalProps {
   maxUses: number | null;
   setMaxUses: (value: number | null) => void;
-  handleGenerateInviteLink: () => void;
+  handleGenerateInviteLink: (isUnlimited: boolean) => void;
   setShowModal: (value: boolean) => void;
 }
 
@@ -58,7 +58,7 @@ const InviteLinkModal: React.FC<InviteLinkModalProps> = ({ maxUses, setMaxUses, 
           </button>
           <button
             className="py-2 px-4 bg-primary-color text-white font-semibold rounded-md hover:bg-secondary-color focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-color"
-            onClick={handleGenerateInviteLink}
+            onClick={() => handleGenerateInviteLink(isUnlimited)}
           >
             Confirm
           </button>
