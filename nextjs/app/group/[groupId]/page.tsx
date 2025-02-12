@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import pb from '@/lib/pocketbase';
 import { useRouter } from 'next/navigation';
 import '@/styles/globals.css';
+import InviteLinkModal from './components/InviteLinkModal';
 
 const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
   const [group, setGroup] = useState<Group | null>(null);
@@ -11,6 +12,8 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
   const [groupId, setGroupId] = useState<string | null>(null);
   const [leaveGroupError, setLeaveGroupError] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [maxUses, setMaxUses] = useState<number | null>(null);
+  const [showModal, setShowModal] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -142,6 +145,34 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
     }
   };
 
+  const handleGenerateInviteLink = async () => {
+    try {
+      const user = pb.authStore.model;
+      if (!user) {
+        alert('You are not logged in. Please log in and try again.');
+        return;
+      }
+
+      if (!groupId) {
+        alert('Group ID is missing.');
+        return;
+      }
+
+      await pb.collection('invite_links').create({
+        group_id: groupId,
+        created_by: user.id,
+        max_uses: maxUses ?? 1,
+      });
+
+      alert('Invite link generated successfully.');
+      setShowModal(false);
+      setMaxUses(null); // Reset maxUses when closing the modal
+    } catch (error) {
+      console.error('Error generating invite link:', error);
+      alert('An error occurred while generating the invite link. Please try again later.');
+    }
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -169,14 +200,19 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
   };
 
   return (
-    <div className="p-6 bg-white shadow-md rounded-lg max-w-4xl mx-auto relative">
+    <div className="relative p-6 bg-white shadow-md rounded-lg max-w-4xl mx-auto">
       {isAdmin && (
-        <button
-          className="absolute top-6 right-6 py-2 px-4 bg-primary-color text-white font-semibold rounded-md hover:bg-secondary-color focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-color w-auto"
-          onClick={() => alert('Invite link generation logic goes here')}
-        >
-          Invite user
-        </button>
+        <div className="absolute top-6 right-6 flex flex-col items-end">
+          <button
+            className="py-2 px-4 bg-primary-color text-white font-semibold rounded-md hover:bg-secondary-color focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-color w-auto"
+            onClick={() => {
+              setShowModal(true);
+              setMaxUses(null); // Reset maxUses when opening the modal
+            }}
+          >
+            Generate Invite Link
+          </button>
+        </div>
       )}
       <h1 className="text-4xl font-bold mb-4 text-black">{group?.name}</h1>
       <p className="text-gray-700 mb-6">{group?.description}</p>
@@ -205,6 +241,15 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
           Leave group
         </button>
       </div>
+
+      {showModal && (
+        <InviteLinkModal
+          maxUses={maxUses}
+          setMaxUses={setMaxUses}
+          handleGenerateInviteLink={handleGenerateInviteLink}
+          setShowModal={setShowModal}
+        />
+      )}
     </div>
   );
 };
