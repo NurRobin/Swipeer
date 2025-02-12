@@ -9,6 +9,7 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [groupId, setGroupId] = useState<string | null>(null);
+  const [leaveGroupError, setLeaveGroupError] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -64,9 +65,9 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
       } catch (error) {
         console.error('Error fetching group:', error);
         if ((error as any).status === 404) {
-          setError('Diese Gruppe konnten wir leider nicht finden oder Sie haben keinen Zugriff.');
+          setError('This group could not be found or you do not have access.');
         } else {
-          setError('Ein unerwarteter Fehler ist aufgetreten.');
+          setError('An unexpected error occurred.');
         }
       } finally {
         setLoading(false);
@@ -75,6 +76,38 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
 
     fetchGroup();
   }, [groupId]);
+
+  const handleLeaveGroup = async () => {
+    try {
+      const user = pb.authStore.model;
+
+      if (!user) {
+        setLeaveGroupError('You are not logged in. Please log in and try again.');
+        console.error('No user is logged in.');
+        return;
+      }
+
+      const groupMembersRecord = await pb.collection('group_members').getFullList({
+        filter: `user_id = "${user.id}"`,
+      });
+
+      if (groupMembersRecord.length === 0) {
+        setLeaveGroupError('You are not a member of this group.');
+        console.warn('No group members found for the current user.');
+        return;
+      }
+
+      for (const record of groupMembersRecord) {
+        await pb.collection('group_members').delete(record.id);
+      }
+
+      console.log(`User ${user.email} successfully left the group.`);
+      router.push('/');
+    } catch (error) {
+      setLeaveGroupError('An error occurred while trying to leave the group. Please try again later.');
+      console.error('Error leaving the group:', error);
+    }
+  };
 
   if (loading) {
     return <div>Loading...</div>;
@@ -102,29 +135,6 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   };
 
-  const handleLeaveGroup = async () => {
-    try {
-      const user = pb.authStore.model;
-
-      if (!user) {
-        console.error('No user is logged in.');
-        return;
-      }
-
-      const groupMembersRecord = await pb.collection('group_members').getFullList({
-        filter: `user_id = "${user.id}"`,
-      });
-
-      for (const record of groupMembersRecord) {
-        await pb.collection('group_members').delete(record.id);
-      }
-
-      console.log(`User ${user.email} successfully left the group.`);
-    } catch (error) {
-      console.error('Error leaving the group:', error);
-    }
-  };
-
   return (
     <div className="p-6 bg-white shadow-md rounded-lg max-w-4xl mx-auto">
       <h1 className="text-4xl font-bold mb-4 text-black">{group?.name}</h1>
@@ -141,6 +151,11 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
           </li>
         ))}
       </ul>
+      {leaveGroupError && (
+        <div className="text-red-500 text-center mt-4">
+          {leaveGroupError}
+        </div>
+      )}
       <div className="mt-6 flex justify-center">
         <button
           onClick={handleLeaveGroup}
