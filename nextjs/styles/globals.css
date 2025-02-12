@@ -174,3 +174,40 @@ form button:hover {
     width: 400px;
   }
 }
+
+/* Social Media Feed Styles */
+.feed {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+}
+
+.feed-item {
+  background: var(--background-color);
+  border: 1px solid var(--shadow-color);
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: var(--shadow-color) 0px 4px 6px -1px, var(--shadow-color) 0px 2px 4px -1px;
+  transition: transform 0.3s ease;
+}
+
+.feed-item:hover {
+  transform: translateY(-5px);
+}
+
+.feed-item h3 {
+  font-size: 1.5em;
+  color: var(--primary-color);
+  margin-bottom: 10px;
+}
+
+.feed-item p {
+  color: var(--text-color);
+  margin-bottom: 10px;
+}
+
+.feed-item .timestamp {
+  font-size: 0.8em;
+  color: var(--shadow-color);
+}
