@@ -75,7 +75,6 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
           setIsAdmin(isAdmin);
         }
       } catch (error) {
-        console.error('Error fetching group:', error);
         if ((error as any).status === 404) {
           setError('This group could not be found or you do not have access.');
         } else {
@@ -209,7 +208,7 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
               setMaxUses(null);
             }}
           >
-            Generate Invite Link
+            Generate invite link
           </button>
         </div>
       )}
