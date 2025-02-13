@@ -8,18 +8,16 @@ import { useGroup } from './hooks/useGroup';
 import { useLeaveGroup } from './hooks/useLeaveGroup';
 import { useGenerateInviteLink } from './hooks/useGenerateInviteLink';
 
-const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
+const GroupPage = () => {
   const [maxUses, setMaxUses] = useState<number | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [showLeaveModal, setShowLeaveModal] = useState(false);
   const router = useRouter();
 
-  const { groupId } = useParams<Awaited<typeof params>>()
+  const { groupId } = useParams<{ groupId: string }>()
   const groupQuery = useGroup(groupId)
   const leaveGroupMutation = useLeaveGroup(groupId);
   const generateInviteLinkMutation = useGenerateInviteLink(groupId)
-
-  
 
   if (groupQuery.isLoading) {
     return <div>Loading...</div>;
@@ -94,7 +92,6 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
           Leave group
         </button>
       </div>
-
       {showModal && (
         <InviteLinkModal
           maxUses={maxUses}
@@ -106,7 +103,6 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
           setShowModal={setShowModal}
         />
       )}
-
       {showLeaveModal && (
         <LeaveGroupModal
           handleLeaveGroup={leaveGroupMutation.mutateAsync}
