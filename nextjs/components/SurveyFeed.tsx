@@ -25,7 +25,7 @@ const SurveyFeed: React.FC = () => {
           start_at: survey.start_at,
           end_at: survey.end_at,
         }));
-        setSurveys(mappedSurveys);
+        setSurveys(mappedSurveys as Survey[]);
       } catch (err) {
         setError('Failed to fetch surveys');
         console.error(err);
