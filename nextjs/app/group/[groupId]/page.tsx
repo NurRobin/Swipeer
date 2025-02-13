@@ -14,6 +14,7 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [maxUses, setMaxUses] = useState<number | null>(null);
   const [showModal, setShowModal] = useState(false);
+  const [feedback, setFeedback] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -149,13 +150,11 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
     try {
       const user = pb.authStore.model;
       if (!user) {
-        alert('You are not logged in. Please log in and try again.');
-        return;
+        throw new Error('You are not logged in. Please log in and try again.');
       }
 
       if (!groupId) {
-        alert('Group ID is missing.');
-        return;
+        throw new Error('Group ID is missing.');
       }
 
       await pb.collection('invite_links').create({
@@ -165,12 +164,11 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
         infinite: isUnlimited,
       });
 
-      alert('Invite link generated successfully.');
+      setFeedback('Invite link generated successfully.');
       setShowModal(false);
       setMaxUses(null);
     } catch (error) {
-      console.error('Error generating invite link:', error);
-      alert('An error occurred while generating the invite link. Please try again later.');
+      throw new Error('An error occurred while generating the invite link. Please try again later.');
     }
   };
 
@@ -232,6 +230,11 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
       {leaveGroupError && (
         <div className="text-red-500 text-center mt-4">
           {leaveGroupError}
+        </div>
+      )}
+      {feedback && (
+        <div className="text-green-500 text-center mt-4">
+          {feedback}
         </div>
       )}
       <div className="mt-6 flex justify-center">
