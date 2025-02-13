@@ -174,3 +174,34 @@ form button:hover {
     width: 400px;
   }
 }
+
+
+/* Global button loading styles */
+button[data-loading="true"] {
+  position: relative;
+  pointer-events: none; /* Disable interaction */
+  opacity: 0.7; /* Slight transparency */
+}
+
+button[data-loading="true"]::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1em;
+  height: 1em;
+  border: 2px solid transparent;
+  border-top-color: currentColor;
+  border-radius: 60%;
+  animation: spin 0.6s linear infinite;
+  transform: translate(-50%, -50%);
+}
+
+@keyframes spin {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
