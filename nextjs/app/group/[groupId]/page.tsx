@@ -4,6 +4,7 @@ import pb from '@/lib/pocketbase';
 import { useRouter } from 'next/navigation';
 import '@/styles/globals.css';
 import InviteLinkModal from './components/InviteLinkModal';
+import LeaveGroupModal from './components/LeaveGroupModal';
 
 const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
   const [group, setGroup] = useState<Group | null>(null);
@@ -14,6 +15,7 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [maxUses, setMaxUses] = useState<number | null>(null);
   const [showModal, setShowModal] = useState(false);
+  const [showLeaveModal, setShowLeaveModal] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
   const router = useRouter();
 
@@ -238,7 +240,7 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
       )}
       <div className="mt-6 flex justify-center">
         <button
-          onClick={handleLeaveGroup}
+          onClick={() => setShowLeaveModal(true)}
           className="w-full max-w-xs py-2 px-4 bg-primary-color text-white font-semibold rounded-md hover:bg-secondary-color focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-color"
         >
           Leave group
@@ -251,6 +253,13 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
           setMaxUses={setMaxUses}
           handleGenerateInviteLink={handleGenerateInviteLink}
           setShowModal={setShowModal}
+        />
+      )}
+
+      {showLeaveModal && (
+        <LeaveGroupModal
+          handleLeaveGroup={handleLeaveGroup}
+          setShowLeaveModal={setShowLeaveModal}
         />
       )}
     </div>
