@@ -2,12 +2,21 @@
 import React, { useEffect, useState } from 'react';
 import pb from '@/lib/pocketbase';
 import { useRouter } from 'next/navigation';
+import '@/styles/globals.css';
+import InviteLinkModal from './components/InviteLinkModal';
+import LeaveGroupModal from './components/LeaveGroupModal';
 
 const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
   const [group, setGroup] = useState<Group | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [groupId, setGroupId] = useState<string | null>(null);
+  const [leaveGroupError, setLeaveGroupError] = useState<string | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [maxUses, setMaxUses] = useState<number | null>(null);
+  const [showModal, setShowModal] = useState(false);
+  const [showLeaveModal, setShowLeaveModal] = useState(false);
+  const [feedback, setFeedback] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -35,6 +44,7 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
 
         members.forEach((member, index) => {
           member.display_name = users[index].display_name;
+          member.role = member.role.charAt(0).toUpperCase() + member.role.slice(1);
         });
 
         // Sort members by "joined_at" date
@@ -49,7 +59,7 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
           members: members.map((member) => ({
             id: member.id,
             display_name: member.display_name,
-            role: member.user_id === group.created_by ? 'Admin' : 'Member',
+            role: member.role,
             email: member.email,
             created: member.created,
             updated: member.updated,
@@ -60,12 +70,17 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
           created: group.created,
           updated: group.updated,
         });
+
+        const user = pb.authStore.model;
+        if (user) {
+          const isAdmin = members.some(member => member.user_id === user.id && member.role.toLowerCase() === 'admin');
+          setIsAdmin(isAdmin);
+        }
       } catch (error) {
-        console.error('Error fetching group:', error);
         if ((error as any).status === 404) {
-          setError('Diese Gruppe konnten wir leider nicht finden oder Sie haben keinen Zugriff.');
+          setError('This group could not be found or you do not have access.');
         } else {
-          setError('Ein unerwarteter Fehler ist aufgetreten.');
+          setError('An unexpected error occurred.');
         }
       } finally {
         setLoading(false);
@@ -74,6 +89,89 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
 
     fetchGroup();
   }, [groupId]);
+
+  const handleLeaveGroup = async () => {
+    try {
+      const user = pb.authStore.model;
+      if (!user) {
+        setLeaveGroupError('You are not logged in. Please log in and try again.');
+        return;
+      }
+
+      if (!group) return;
+
+      const groupMembersRecord = await pb.collection('group_members').getFullList({
+        filter: `group_id = "${groupId}"`
+      });
+
+      if (groupMembersRecord.length === 0) {
+        setLeaveGroupError('You are not a member of this group.');
+        return;
+      }
+
+      const isAdmin = groupMembersRecord.some(member => member.user_id === user.id && member.role === 'admin');
+
+      if (isAdmin) {
+        if (groupMembersRecord.length === 1) {
+          const confirmDelete = confirm('You are the last member of this group. The group will be deleted if you leave. Do you want to proceed?');
+          if (confirmDelete) {
+            if (groupId) {
+              await pb.collection('groups').delete(groupId);
+              router.push('/');
+              return;
+            }
+          } else {
+            return;
+          }
+        } else {
+          const newAdmin = groupMembersRecord
+            .filter(member => member.user_id !== user.id)
+            .sort((a, b) => new Date(a.joined_at).getTime() - new Date(b.joined_at).getTime())[0];
+
+          if (newAdmin) {
+            await pb.collection('group_members').update(newAdmin.id, { role: 'admin' });
+          }
+        }
+      }
+
+      for (const record of groupMembersRecord.filter(m => m.user_id === user.id)) {
+        try {
+          await pb.collection('group_members').delete(record.id);
+        } catch (error) {
+        }
+      }
+
+      router.push('/');
+    } catch (error) {
+      setLeaveGroupError('An error occurred while trying to leave the group. Please try again later.');
+    }
+  };
+
+  const handleGenerateInviteLink = async (isUnlimited: boolean) => {
+    try {
+      const user = pb.authStore.model;
+      if (!user) {
+        throw new Error('You are not logged in. Please log in and try again.');
+      }
+
+      if (!groupId) {
+        throw new Error('Group ID is missing.');
+      }
+
+      await pb.collection('invite_links').create({
+        group_id: groupId,
+        created_by: user.id,
+        max_uses: isUnlimited ? null : maxUses ?? 1,
+        infinite: isUnlimited,
+      });
+
+      setFeedback('Invite link generated successfully.');
+      setShowModal(false);
+      setMaxUses(null);
+    } catch (error) {
+      throw new Error('An error occurred while generating the invite link. Please try again later.');
+    }
+  };
 
   if (loading) {
     return <div>Loading...</div>;
@@ -102,7 +200,20 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
   };
 
   return (
-    <div className="p-6 bg-white shadow-md rounded-lg max-w-4xl mx-auto">
+    <div className="relative p-6 bg-white shadow-md rounded-lg max-w-4xl mx-auto">
+      {isAdmin && (
+        <div className="absolute top-6 right-6 flex flex-col items-end">
+          <button
+            className="py-2 px-4 bg-primary-color text-white font-semibold rounded-md hover:bg-secondary-color focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-color w-auto"
+            onClick={() => {
+              setShowModal(true);
+              setMaxUses(null);
+            }}
+          >
+            Generate invite link
+          </button>
+        </div>
+      )}
       <h1 className="text-4xl font-bold mb-4 text-black">{group?.name}</h1>
       <p className="text-gray-700 mb-6">{group?.description}</p>
       <h2 className="text-2xl font-semibold mb-4 text-black">Members</h2>
@@ -117,6 +228,40 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
           </li>
         ))}
       </ul>
+      {leaveGroupError && (
+        <div className="text-red-500 text-center mt-4">
+          {leaveGroupError}
+        </div>
+      )}
+      {feedback && (
+        <div className="text-green-500 text-center mt-4">
+          {feedback}
+        </div>
+      )}
+      <div className="mt-6 flex justify-center">
+        <button
+          onClick={() => setShowLeaveModal(true)}
+          className="w-full max-w-xs py-2 px-4 bg-primary-color text-white font-semibold rounded-md hover:bg-secondary-color focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-color"
+        >
+          Leave group
+        </button>
+      </div>
+
+      {showModal && (
+        <InviteLinkModal
+          maxUses={maxUses}
+          setMaxUses={setMaxUses}
+          handleGenerateInviteLink={handleGenerateInviteLink}
+          setShowModal={setShowModal}
+        />
+      )}
+
+      {showLeaveModal && (
+        <LeaveGroupModal
+          handleLeaveGroup={handleLeaveGroup}
+          setShowLeaveModal={setShowLeaveModal}
+        />
+      )}
     </div>
   );
 };
