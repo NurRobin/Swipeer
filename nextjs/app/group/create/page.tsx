@@ -18,6 +18,29 @@ const CreateGroupPage: React.FC = () => {
     }
   }, [router]);
 
+  const pollForGroupMember = async (userId: string, groupId: string) => {
+    console.log("Start polling for group_members entry...");
+    let found = false;
+    while (!found) {
+      try {
+        // Wir holen maximal 1 Eintrag, der unseren Filterkriterien entspricht
+        const members = await pb.collection('group_members').getFullList(1, {
+          filter: `user_id = "${userId}" && group_id = "${groupId}"`,
+        });
+        console.log("Polling-Ergebnis:", members);
+        if (members.length > 0) {
+          found = true;
+          break;
+        }
+      } catch (err) {
+        console.error("Fehler beim Polling in group_members:", err);
+      }
+      // Warte 500ms, bevor erneut geprüft wird
+      await new Promise((resolve) => setTimeout(resolve, 500));
+    }
+    console.log("Eintrag in group_members gefunden.");
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setErrorMessage('');
@@ -37,12 +60,13 @@ const CreateGroupPage: React.FC = () => {
 
       // Erstelle den Gruppen-Datensatz in der Collection "groups"
       const createdGroup = await pb.collection('groups').create(data);
+      console.log("Gruppe erstellt:", createdGroup);
 
-      // Nach erfolgreicher Erstellung: Zeige eine Animation (Spinner) für 2-3 Sekunden
-      const delay = Math.floor(Math.random() * 1000) + 2000; // zufälliger Delay zwischen 2000 und 3000 ms
-      setTimeout(() => {
-        router.push(`/group/${createdGroup.id}`);
-      }, delay);
+      // Starte das Polling, bis der group_members Eintrag existiert
+      await pollForGroupMember(user.id, createdGroup.id);
+
+      // Sobald der Eintrag existiert, leite weiter
+      router.push(`/group/${createdGroup.id}`);
     } catch (error: any) {
       setErrorMessage(error.message || 'Fehler bei der Gruppenerstellung');
       setLoading(false);
