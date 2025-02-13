@@ -43,10 +43,10 @@ const SurveyFeed: React.FC = () => {
     <div className="space-y-4">
       {surveys.map((survey) => (
         <Link key={survey.id} href={`/survey/${survey.id}`}>
-          <div className="p-4 bg-white rounded-lg shadow cursor-pointer transition-transform transform hover:scale-105">
+          <div className="p-4 rounded-lg shadow cursor-pointer transition-transform transform hover:scale-105">
             <h3 className="text-lg font-bold text-[var(--primary-color)]">{survey.title}</h3>
-            <p className="text-gray-600">{survey.description}</p>
-            <p className="text-sm text-gray-400">{new Date(survey.start_at).toLocaleString()}</p>
+            <p className="">{survey.description}</p>
+            <p className="text-sm">{new Date(survey.start_at).toLocaleString()}</p>
           </div>
         </Link>
       ))}
