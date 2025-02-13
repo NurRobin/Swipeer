@@ -36,7 +36,6 @@ const LoginRegister: React.FC = () => {
     setErrorMessage('');
     try {
       await login(loginEmail, loginPassword);
-      router.push('/dashboard');
     } catch (error: any) {
       setErrorMessage('Invalid email or password.');
     }
