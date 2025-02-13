@@ -6,9 +6,9 @@
 
 :root {
   /* Light Mode Colors */
-  --primary-color: #ff625c; /* Hauptakzente */
+  --primary-color: #ff6969; /* Hauptakzente */
   --secondary-color: #ffbf46; /* Sekundäre Akzente */
-  --highlight-color: #56ccf2; /* Hervorhebungen */
+  --highlight-color: #ff6969; /* Hervorhebungen */
   --shadow-color: #eaeaea; /* Schatten und Trennlinien */
   --background-color: #ffffff; /* Primärer Hintergrund */
   --text-color: #333333; /* Textfarbe */
@@ -17,9 +17,9 @@
 @media (prefers-color-scheme: dark) {
   :root {
     /* Dark Mode Colors */
-    --primary-color: #ff625c;
+    --primary-color: #ff6969;
     --secondary-color: #ffbf46;
-    --highlight-color: #56ccf2;
+    --highlight-color: #ff6969;
     --shadow-color: #333333;
     --background-color: #121212;
     --text-color: #ffffff;
@@ -31,12 +31,9 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-}
-
-body {
-  font-family: "Poppins", sans-serif;
-  background-color: var(--background-color);
   color: var(--text-color);
+  background-color: var(--background-color);
+  font-family: "Poppins", sans-serif;
 }
 
 a {
