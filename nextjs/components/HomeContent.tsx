@@ -8,11 +8,11 @@ const HomeContent: React.FC = () => {
     <div className="container mx-auto p-4">
       <HomeHeader />
       <div className="mt-4 flex">
-        <div className="w-1/4 sticky top-0">
-          <GroupSidebar />
-        </div>
         <div className="w-3/4 mx-auto overflow-y-auto h-screen">
           <SurveyFeed />
+        </div>
+        <div className="w-1/4 sticky top-0">
+          <GroupSidebar />
         </div>
       </div>
     </div>
