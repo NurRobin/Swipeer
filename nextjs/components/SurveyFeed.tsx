@@ -36,14 +36,14 @@ const SurveyFeed: React.FC = () => {
   }, []);
 
   if (error) {
-    return <div className="p-4 bg-red-100 text-red-800 rounded-lg shadow-md">{error}</div>;
+    return <div className="p-4 bg-red-100 text-red-800 rounded-lg auto-shadow">{error}</div>;
   }
 
   return (
     <div className="space-y-4">
       {surveys.map((survey) => (
         <Link key={survey.id} href={`/survey/${survey.id}`}>
-          <div className="p-4 rounded-lg shadow cursor-pointer transition-transform transform hover:scale-105">
+          <div className="p-4 rounded-lg auto-shadow cursor-pointer transition-transform transform hover:scale-105">
             <h3 className="text-lg font-bold text-[var(--primary-color)]">{survey.title}</h3>
             <p className="">{survey.description}</p>
             <p className="text-sm">{new Date(survey.start_at).toLocaleString()}</p>

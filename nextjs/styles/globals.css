@@ -306,3 +306,7 @@ form button:hover {
 .mb-20 {
   margin-bottom: 20px;
 }
+
+.auto-shadow {
+  box-shadow: var(--shadow-color) 0px 4px 6px -1px, var(--shadow-color) 0px 2px 4px -1px;
+}

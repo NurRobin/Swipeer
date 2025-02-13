@@ -29,7 +29,7 @@ const SurveyList: React.FC = () => {
   }, []);
 
   if (error) {
-    return <div className="p-4 bg-red-100 text-red-800 rounded-lg shadow-md">{error}</div>;
+    return <div className="p-4 bg-red-100 text-red-800 rounded-lg auto-shadow">{error}</div>;
   }
 
   return (
@@ -37,7 +37,7 @@ const SurveyList: React.FC = () => {
       <h2 className="text-xl font-bold mb-4">Your Surveys</h2>
       <ul>
         {surveys.map((survey) => (
-          <li key={survey.id} className="mb-2 p-2 rounded shadow">
+          <li key={survey.id} className="mb-2 p-2 rounded auto-shadow">
             {survey.title}
           </li>
         ))}

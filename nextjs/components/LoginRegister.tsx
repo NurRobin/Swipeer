@@ -65,7 +65,7 @@ const LoginRegister: React.FC = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-8">
-      <div className="w-full max-w-lg bg-white rounded-xl shadow-lg overflow-hidden">
+      <div className="w-full max-w-lg bg-white rounded-xl auto-shadow overflow-hidden">
         {/* Tab Header */}
         <div className="flex justify-around bg-gray-100">
           <button
@@ -114,7 +114,7 @@ const LoginRegister: React.FC = () => {
                       value={loginEmail}
                       onChange={(e) => setLoginEmail(e.target.value)}
                       required
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--primary-color)] focus:ring-[var(--primary-color)]"
+                      className="mt-1 block w-full rounded-md border-gray-300 auto-shadow focus:border-[var(--primary-color)] focus:ring-[var(--primary-color)]"
                     />
                   </div>
                   <div>
@@ -127,7 +127,7 @@ const LoginRegister: React.FC = () => {
                       value={loginPassword}
                       onChange={(e) => setLoginPassword(e.target.value)}
                       required
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--primary-color)] focus:ring-[var(--primary-color)]"
+                      className="mt-1 block w-full rounded-md border-gray-300 auto-shadow focus:border-[var(--primary-color)] focus:ring-[var(--primary-color)]"
                     />
                   </div>
                   {errorMessage && <p className="text-red-500 text-sm">{errorMessage}</p>}
@@ -155,7 +155,7 @@ const LoginRegister: React.FC = () => {
                       value={regEmail}
                       onChange={(e) => setRegEmail(e.target.value)}
                       required
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--primary-color)] focus:ring-[var(--primary-color)]"
+                      className="mt-1 block w-full rounded-md border-gray-300 auto-shadow focus:border-[var(--primary-color)] focus:ring-[var(--primary-color)]"
                     />
                   </div>
                   <div>
@@ -168,7 +168,7 @@ const LoginRegister: React.FC = () => {
                       value={regDisplayName}
                       onChange={(e) => setRegDisplayName(e.target.value)}
                       required
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--primary-color)] focus:ring-[var(--primary-color)]"
+                      className="mt-1 block w-full rounded-md border-gray-300 auto-shadow focus:border-[var(--primary-color)] focus:ring-[var(--primary-color)]"
                     />
                   </div>
                   <div>
@@ -181,7 +181,7 @@ const LoginRegister: React.FC = () => {
                       value={regPassword}
                       onChange={(e) => setRegPassword(e.target.value)}
                       required
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--primary-color)] focus:ring-[var(--primary-color)]"
+                      className="mt-1 block w-full rounded-md border-gray-300 auto-shadow focus:border-[var(--primary-color)] focus:ring-[var(--primary-color)]"
                     />
                   </div>
                   <div>
@@ -194,7 +194,7 @@ const LoginRegister: React.FC = () => {
                       value={regConfirmPassword}
                       onChange={(e) => setRegConfirmPassword(e.target.value)}
                       required
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--primary-color)] focus:ring-[var(--primary-color)]"
+                      className="mt-1 block w-full rounded-md border-gray-300 auto-shadow focus:border-[var(--primary-color)] focus:ring-[var(--primary-color)]"
                     />
                   </div>
                   {errorMessage && <p className="text-red-500 text-sm">{errorMessage}</p>}

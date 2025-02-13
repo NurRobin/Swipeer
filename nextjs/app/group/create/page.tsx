@@ -75,7 +75,7 @@ const CreateGroupPage: React.FC = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-8">
-      <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-8">
+      <div className="w-full max-w-md bg-white rounded-xl auto-shadow p-8">
         <h1 className="text-2xl font-bold text-center text-[var(--primary-color)] mb-6">
           Gruppe erstellen
         </h1>
@@ -99,7 +99,7 @@ const CreateGroupPage: React.FC = () => {
                 value={groupName}
                 onChange={(e) => setGroupName(e.target.value)}
                 required
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--primary-color)] focus:ring-[var(--primary-color)]"
+                className="mt-1 block w-full rounded-md border-gray-300 auto-shadow focus:border-[var(--primary-color)] focus:ring-[var(--primary-color)]"
               />
             </div>
             <div>
@@ -112,7 +112,7 @@ const CreateGroupPage: React.FC = () => {
                 onChange={(e) => setGroupDescription(e.target.value)}
                 required
                 rows={4}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--primary-color)] focus:ring-[var(--primary-color)]"
+                className="mt-1 block w-full rounded-md border-gray-300 auto-shadow focus:border-[var(--primary-color)] focus:ring-[var(--primary-color)]"
               ></textarea>
             </div>
             <button

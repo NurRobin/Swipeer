@@ -46,7 +46,7 @@ export default function Dashboard() {
     <div className="min-h-screen bg-black-100 flex flex-col items-center justify-center">
       <h1 className="text-4xl font-bold mb-6">Dashboard</h1>
       {user ? (
-        <div className="bg-black p-6 rounded-lg shadow-md w-full max-w-md">
+        <div className="bg-black p-6 rounded-lg auto-shadow w-full max-w-md">
           <p className="text-xl mb-4">Welcome, <span className="font-semibold">{user.display_name}</span></p>
           <p className="mb-2"><span className="font-semibold">Email:</span> {user.email}</p>
           <p className="mb-2"><span className="font-semibold">Verified?</span> {user.verified ? 'Yes' : 'No'}</p>

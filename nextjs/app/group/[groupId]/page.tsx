@@ -179,12 +179,12 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
 
   if (error) {
     return (
-      <div className="p-6 bg-white shadow-md rounded-lg max-w-4xl mx-auto text-center">
+      <div className="p-6 bg-white auto-shadow rounded-lg max-w-4xl mx-auto text-center">
         <h1 className="text-4xl font-bold mb-4 ">Fehler</h1>
         <p className="text-gray-700 mb-6">{error}</p>
         <button
           onClick={() => router.push('/')}
-          className="px-4 py-2 bg-blue-500  rounded-lg shadow-md hover:bg-blue-600"
+          className="px-4 py-2 bg-blue-500  rounded-lg auto-shadow hover:bg-blue-600"
         >
           Zurück zum Start
         </button>
@@ -200,7 +200,7 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
   };
 
   return (
-    <div className="relative p-6 bg-white shadow-md rounded-lg max-w-4xl mx-auto">
+    <div className="relative p-6 bg-white auto-shadow rounded-lg max-w-4xl mx-auto">
       {isAdmin && (
         <div className="absolute top-6 right-6 flex flex-col items-end">
           <button
@@ -219,7 +219,7 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
       <h2 className="text-2xl font-semibold mb-4 ">Members</h2>
       <ul className="list-none pl-0">
         {group?.members.map((member) => (
-          <li key={member.id} className="mb-4 flex items-center bg-gray-100 p-4 rounded-lg shadow-sm">
+          <li key={member.id} className="mb-4 flex items-center bg-gray-100 p-4 rounded-lg auto-shadow">
             <p className="text-gray-800 font-medium flex-1">{member.display_name}</p>
             <p className="text-gray-500 text-sm flex-1 text-right">
               Member since {calculateMemberSince(member.joined_at)} {calculateMemberSince(member.joined_at) === 1 ? 'day' : 'days'}

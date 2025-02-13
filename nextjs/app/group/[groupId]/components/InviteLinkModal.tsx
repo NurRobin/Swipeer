@@ -26,7 +26,7 @@ const InviteLinkModal: React.FC<InviteLinkModalProps> = ({ maxUses, setMaxUses, 
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg">
+      <div className="bg-white p-6 rounded-lg auto-shadow">
         <h2 className="text-2xl font-semibold mb-4  text-center">Generate invite link</h2>
         <div className="flex flex-col items-center">
           <input

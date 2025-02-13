@@ -8,7 +8,7 @@ interface LeaveGroupModalProps {
 const LeaveGroupModal: React.FC<LeaveGroupModalProps> = ({ handleLeaveGroup, setShowLeaveModal }) => {
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg">
+      <div className="bg-white p-6 rounded-lg auto-shadow">
         <h2 className="text-2xl font-semibold mb-4  text-center">Leave Group</h2>
         <p className="text-center mb-4 ">Are you sure you want to leave the group?</p>
         <div className="flex justify-center">

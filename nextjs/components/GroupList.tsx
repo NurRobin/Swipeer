@@ -29,7 +29,7 @@ const GroupList: React.FC = () => {
   }, []);
 
   if (error) {
-    return <div className="p-4 bg-red-100 text-red-800 rounded-lg shadow-md">{error}</div>;
+    return <div className="p-4 bg-red-100 text-red-800 rounded-lg auto-shadow">{error}</div>;
   }
 
   return (
