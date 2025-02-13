@@ -180,11 +180,11 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
   if (error) {
     return (
       <div className="p-6 bg-white shadow-md rounded-lg max-w-4xl mx-auto text-center">
-        <h1 className="text-4xl font-bold mb-4 text-black">Fehler</h1>
+        <h1 className="text-4xl font-bold mb-4 ">Fehler</h1>
         <p className="text-gray-700 mb-6">{error}</p>
         <button
           onClick={() => router.push('/')}
-          className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600"
+          className="px-4 py-2 bg-blue-500  rounded-lg shadow-md hover:bg-blue-600"
         >
           Zurück zum Start
         </button>
@@ -204,7 +204,7 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
       {isAdmin && (
         <div className="absolute top-6 right-6 flex flex-col items-end">
           <button
-            className="py-2 px-4 bg-primary-color text-white font-semibold rounded-md hover:bg-secondary-color focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-color w-auto"
+            className="py-2 px-4 bg-primary-color  font-semibold rounded-md hover:bg-secondary-color focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-color w-auto"
             onClick={() => {
               setShowModal(true);
               setMaxUses(null);
@@ -214,9 +214,9 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
           </button>
         </div>
       )}
-      <h1 className="text-4xl font-bold mb-4 text-black">{group?.name}</h1>
+      <h1 className="text-4xl font-bold mb-4 ">{group?.name}</h1>
       <p className="text-gray-700 mb-6">{group?.description}</p>
-      <h2 className="text-2xl font-semibold mb-4 text-black">Members</h2>
+      <h2 className="text-2xl font-semibold mb-4 ">Members</h2>
       <ul className="list-none pl-0">
         {group?.members.map((member) => (
           <li key={member.id} className="mb-4 flex items-center bg-gray-100 p-4 rounded-lg shadow-sm">
@@ -241,7 +241,7 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
       <div className="mt-6 flex justify-center">
         <button
           onClick={() => setShowLeaveModal(true)}
-          className="w-full max-w-xs py-2 px-4 bg-primary-color text-white font-semibold rounded-md hover:bg-secondary-color focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-color"
+          className="w-full max-w-xs py-2 px-4 bg-primary-color  font-semibold rounded-md hover:bg-secondary-color focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-color"
         >
           Leave group
         </button>

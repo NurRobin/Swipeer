@@ -117,7 +117,7 @@ const CreateGroupPage: React.FC = () => {
             </div>
             <button
               type="submit"
-              className="w-full py-2 px-4 bg-[var(--primary-color)] text-white rounded-md hover:brightness-90 transition-colors"
+              className="w-full py-2 px-4 bg-[var(--primary-color)]  rounded-md hover:brightness-90 transition-colors"
             >
               Gruppe erstellen
             </button>

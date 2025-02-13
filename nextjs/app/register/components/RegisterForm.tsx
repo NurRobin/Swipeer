@@ -82,7 +82,7 @@ export default function RegisterForm() {
                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-color focus:border-primary-color sm:text-sm"
                 />
             </div>
-            <button type="submit" className="w-full py-2 px-4 bg-primary-color text-white font-semibold rounded-md hover:bg-secondary-color focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-color">
+            <button type="submit" className="w-full py-2 px-4 bg-primary-color  font-semibold rounded-md hover:bg-secondary-color focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-color">
                 Register
             </button>
             {error && <p className="text-red-500 text-sm mt-2">{error}</p>}

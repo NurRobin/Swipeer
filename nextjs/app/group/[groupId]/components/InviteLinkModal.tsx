@@ -27,7 +27,7 @@ const InviteLinkModal: React.FC<InviteLinkModalProps> = ({ maxUses, setMaxUses, 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
       <div className="bg-white p-6 rounded-lg shadow-lg">
-        <h2 className="text-2xl font-semibold mb-4 text-black text-center">Generate invite link</h2>
+        <h2 className="text-2xl font-semibold mb-4  text-center">Generate invite link</h2>
         <div className="flex flex-col items-center">
           <input
             type="number"
@@ -41,7 +41,7 @@ const InviteLinkModal: React.FC<InviteLinkModalProps> = ({ maxUses, setMaxUses, 
                 setMaxUses(num);
               }
             }}
-            className={`mb-4 py-2 px-4 border rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-color text-black ${isUnlimited ? 'border-gray-300 bg-gray-200 text-gray-500 cursor-not-allowed' : 'border-gray-700'}`}
+            className={`mb-4 py-2 px-4 border rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-color  ${isUnlimited ? 'border-gray-300 bg-gray-200 text-gray-500 cursor-not-allowed' : 'border-gray-700'}`}
             placeholder="Maximum uses..."
             min="1"
             disabled={isUnlimited}
@@ -58,7 +58,7 @@ const InviteLinkModal: React.FC<InviteLinkModalProps> = ({ maxUses, setMaxUses, 
               }}
               className="mr-2"
             />
-            <label className="text-black">Unlimited uses</label>
+            <label className="">Unlimited uses</label>
           </div>
           {error && (
             <div className="text-red-500 text-center mb-4">
@@ -68,7 +68,7 @@ const InviteLinkModal: React.FC<InviteLinkModalProps> = ({ maxUses, setMaxUses, 
         </div>
         <div className="flex justify-center">
           <button
-            className="mr-2 py-2 px-4 bg-gray-500 text-white font-semibold rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+            className="mr-2 py-2 px-4 bg-gray-500  font-semibold rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
             onClick={() => {
               setShowModal(false);
               setMaxUses(null);
@@ -78,7 +78,7 @@ const InviteLinkModal: React.FC<InviteLinkModalProps> = ({ maxUses, setMaxUses, 
             Cancel
           </button>
           <button
-            className={`py-2 px-4 font-semibold rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 ${isConfirmDisabled ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-primary-color text-white hover:bg-secondary-color focus:ring-primary-color'}`}
+            className={`py-2 px-4 font-semibold rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 ${isConfirmDisabled ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-primary-color  hover:bg-secondary-color focus:ring-primary-color'}`}
             onClick={handleConfirm}
             disabled={isConfirmDisabled}
           >
