@@ -36,14 +36,16 @@ const GroupSidebar: React.FC = () => {
   }
 
   return (
-    <div className="feed">
+    <div className="p-4">
       <Link href="/group/create">
-        <button className="bg-primary-color px-4 py-2 rounded-md shadow hover:bg-primary-dark transition mb-4">+ Create Group</button>
+        <button className="bg-[var(--primary-color)] text-white px-4 py-2 rounded-md shadow hover:bg-opacity-90 transition mb-4 w-full">
+          + Create Group
+        </button>
       </Link>
       {groups.map((group) => (
         <Link key={group.id} href={`/group/${group.id}`}>
-          <div className="feed-item cursor-pointer transition-transform transform hover:scale-102">
-            <h3 className="text-lg font-bold text-primary-color">{group.name}</h3>
+          <div className="cursor-pointer p-4 mb-4 rounded-lg shadow hover:shadow-md transition">
+            <h3 className="text-lg font-bold text-[var(--primary-color)]">{group.name}</h3>
             <p className="text-gray-600">{group.description}</p>
           </div>
         </Link>

@@ -1,4 +1,3 @@
-// src/app/page.tsx
 'use client';
 import React, { useState, useEffect } from 'react';
 import pb from '@/lib/pocketbase';
@@ -16,13 +15,15 @@ const HomePage: React.FC = () => {
       .catch(() => setIsAuthenticated(false))
       .finally(() => setLoaded(true));
 
-    const unsubscribe = pb.authStore.onChange(() => setIsAuthenticated(pb.authStore.isValid));
+    const unsubscribe = pb.authStore.onChange(() =>
+      setIsAuthenticated(pb.authStore.isValid)
+    );
     return () => unsubscribe();
   }, []);
 
   if (!loaded) {
     return (
-      <div>
+      <div className="min-h-screen flex items-center justify-center">
         <div className="spinner"></div>
         <style jsx>{`
           @keyframes spin {
@@ -43,11 +44,7 @@ const HomePage: React.FC = () => {
     );
   }
 
-  return (
-    <div>
-      {isAuthenticated ? <HomeContent /> : <LoginRegister />}
-    </div>
-  );
+  return <div>{isAuthenticated ? <HomeContent /> : <LoginRegister />}</div>;
 };
 
 export default HomePage;

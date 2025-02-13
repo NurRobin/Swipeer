@@ -33,11 +33,11 @@ const SurveyList: React.FC = () => {
   }
 
   return (
-    <div className="feed">
+    <div className="p-4">
       <h2 className="text-xl font-bold mb-4">Your Surveys</h2>
       <ul>
         {surveys.map((survey) => (
-          <li key={survey.id} className="feed-item">
+          <li key={survey.id} className="mb-2 p-2 rounded shadow">
             {survey.title}
           </li>
         ))}

@@ -4,8 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import pb from '@/lib/pocketbase';
 import { useTransition, animated } from '@react-spring/web';
 
-const AuthForm: React.FC = () => {
-  // State to toggle between Login and Register
+const LoginRegister: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'login' | 'register'>('login');
 
   // Login form state
@@ -18,13 +17,11 @@ const AuthForm: React.FC = () => {
   const [regPassword, setRegPassword] = useState('');
   const [regConfirmPassword, setRegConfirmPassword] = useState('');
 
-  // Shared error state
   const [errorMessage, setErrorMessage] = useState('');
 
   const { login } = useAuth();
   const router = useRouter();
 
-  // Transition config for switching between forms
   const transitions = useTransition(activeTab, {
     key: activeTab,
     from: { opacity: 0, transform: 'translateY(10px)' },
@@ -34,18 +31,17 @@ const AuthForm: React.FC = () => {
     config: { duration: 200 },
   });
 
-  // Handle login submit
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage('');
     try {
       await login(loginEmail, loginPassword);
+      router.push('/dashboard');
     } catch (error: any) {
       setErrorMessage('Invalid email or password.');
     }
   };
 
-  // Handle register submit
   const handleRegisterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage('');
@@ -68,8 +64,8 @@ const AuthForm: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <div className="w-full max-w-xl bg-white rounded-xl shadow-lg overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-8">
+      <div className="w-full max-w-lg bg-white rounded-xl shadow-lg overflow-hidden">
         {/* Tab Header */}
         <div className="flex justify-around bg-gray-100">
           <button
@@ -218,4 +214,4 @@ const AuthForm: React.FC = () => {
   );
 };
 
-export default AuthForm;
+export default LoginRegister;
