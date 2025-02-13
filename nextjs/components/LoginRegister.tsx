@@ -99,12 +99,12 @@ const LoginRegister: React.FC = () => {
           {transitions((style, item) =>
             item === 'login' ? (
               <animated.div style={style}>
-                <h2 className="text-2xl font-bold text-center text-gray-800 mb-8">
+                <h2 className="text-2xl font-bold text-center  mb-8">
                   Welcome Back!
                 </h2>
                 <form onSubmit={handleLoginSubmit} className="space-y-6">
                   <div>
-                    <label htmlFor="login-email" className="block text-sm font-medium text-gray-700">
+                    <label htmlFor="login-email" className="block text-sm font-medium">
                       Email
                     </label>
                     <input
@@ -117,7 +117,7 @@ const LoginRegister: React.FC = () => {
                     />
                   </div>
                   <div>
-                    <label htmlFor="login-password" className="block text-sm font-medium text-gray-700">
+                    <label htmlFor="login-password" className="block text-sm font-medium">
                       Password
                     </label>
                     <input
@@ -140,12 +140,12 @@ const LoginRegister: React.FC = () => {
               </animated.div>
             ) : (
               <animated.div style={style}>
-                <h2 className="text-2xl font-bold text-center text-gray-800 mb-8">
+                <h2 className="text-2xl font-bold text-center  mb-8">
                   Get Started!
                 </h2>
                 <form onSubmit={handleRegisterSubmit} className="space-y-6">
                   <div>
-                    <label htmlFor="register-email" className="block text-sm font-medium text-gray-700">
+                    <label htmlFor="register-email" className="block text-sm font-medium">
                       Email
                     </label>
                     <input
@@ -158,7 +158,7 @@ const LoginRegister: React.FC = () => {
                     />
                   </div>
                   <div>
-                    <label htmlFor="register-display-name" className="block text-sm font-medium text-gray-700">
+                    <label htmlFor="register-display-name" className="block text-sm font-medium">
                       Display Name
                     </label>
                     <input
@@ -171,7 +171,7 @@ const LoginRegister: React.FC = () => {
                     />
                   </div>
                   <div>
-                    <label htmlFor="register-password" className="block text-sm font-medium text-gray-700">
+                    <label htmlFor="register-password" className="block text-sm font-medium">
                       Password
                     </label>
                     <input
@@ -184,7 +184,7 @@ const LoginRegister: React.FC = () => {
                     />
                   </div>
                   <div>
-                    <label htmlFor="register-confirm-password" className="block text-sm font-medium text-gray-700">
+                    <label htmlFor="register-confirm-password" className="block text-sm font-medium">
                       Confirm Password
                     </label>
                     <input
