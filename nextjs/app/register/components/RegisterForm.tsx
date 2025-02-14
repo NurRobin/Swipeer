@@ -1,39 +1,23 @@
 'use client';
-import pb from '@/lib/pocketbase';
 import React, { useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRegister } from '../hooks/useRegister';
 
 export default function RegisterForm() {
     const [email, setEmail] = useState('');
     const [displayName, setDisplayName] = useState('');
     const [password, setPassword] = useState('');
     const [passwordConfirm, setPasswordConfirm] = useState('');
-    const [error, setError] = useState('');
 
-    const router = useRouter();
-    const searchParams = useSearchParams();
-    const callbackUrl = searchParams?.get('callbackUrl') || '/';
+    const registerMutation = useRegister()
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setError('');
-
-        if (password !== passwordConfirm) {
-            setError('Passwords do not match');
-            return;
-        }
-
-        try {
-            await pb.collection('users').create({
-                email,
-                display_name: displayName,
-                password,
-                passwordConfirm,
-            });
-            router.push(callbackUrl);
-        } catch (error) {
-            setError((error as Error).message);
-        }
+        registerMutation.mutate({
+            email,
+            displayName,
+            password,
+            passwordConfirm
+        })
     };
 
     return (
@@ -85,7 +69,7 @@ export default function RegisterForm() {
             <button type="submit" className="w-full py-2 px-4 bg-primary-color  font-semibold rounded-md hover:bg-secondary-color focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-color">
                 Register
             </button>
-            {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+            {registerMutation.error && <p className="text-red-500 text-sm mt-2">{registerMutation.error.message}</p>}
         </form>
     );
 }
