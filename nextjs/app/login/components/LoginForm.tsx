@@ -25,7 +25,7 @@ export default function LoginForm() {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-color focus:border-primary-color sm:text-sm text-black"
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md auto-shadow focus:outline-none focus:ring-primary-color focus:border-primary-color sm:text-sm "
                 />
             </div>
             <div>
@@ -36,7 +36,7 @@ export default function LoginForm() {
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-color focus:border-primary-color sm:text-sm text-black"
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md auto-shadow focus:outline-none focus:ring-primary-color focus:border-primary-color sm:text-sm "
                 />
             </div>
             <button type="submit" data-loading={loginSubmitMutation.isPending} className="w-full py-2 px-4 bg-primary-color text-white font-semibold rounded-md hover:bg-secondary-color focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-color">

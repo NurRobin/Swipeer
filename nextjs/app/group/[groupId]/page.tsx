@@ -30,7 +30,7 @@ const GroupPage = () => {
         <p className="text-gray-700 mb-6">{groupQuery.error.message}</p>
         <button
           onClick={() => router.push('/')}
-          className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600"
+          className="px-4 py-2 bg-blue-500  rounded-lg auto-shadow hover:bg-blue-600"
         >
           Zurück zum Start
         </button>
@@ -50,7 +50,7 @@ const GroupPage = () => {
       {groupQuery.data?.isAdmin && (
         <div className="absolute top-6 right-6 flex flex-col items-end">
           <button
-            className="py-2 px-4 bg-primary-color text-white font-semibold rounded-md hover:bg-secondary-color focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-color w-auto"
+            className="py-2 px-4 bg-primary-color  font-semibold rounded-md hover:bg-secondary-color focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-color w-auto"
             onClick={() => {
               setShowModal(true);
               setMaxUses(null);
@@ -87,7 +87,7 @@ const GroupPage = () => {
       <div className="mt-6 flex justify-center">
         <button
           onClick={() => setShowLeaveModal(true)}
-          className="w-full max-w-xs py-2 px-4 bg-primary-color text-white font-semibold rounded-md hover:bg-secondary-color focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-color"
+          className="w-full max-w-xs py-2 px-4 bg-primary-color  font-semibold rounded-md hover:bg-secondary-color focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-color"
         >
           Leave group
         </button>

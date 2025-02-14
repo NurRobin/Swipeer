@@ -31,7 +31,7 @@ const InvitePage: React.FC = () => {
                     <p className="text-red-500">{error}</p>
                     <button
                         onClick={() => setError(null)}
-                        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg"
+                        className="mt-4 px-4 py-2 bg-blue-500  rounded-lg"
                     >
                         Close
                     </button>
@@ -44,7 +44,7 @@ const InvitePage: React.FC = () => {
                     <p className="mt-2">Members: {inviteLinkGroupQuery.data?.groupInfo.member_count}</p>
                     <button
                         onClick={handleJoinGroup}
-                        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg"
+                        className="mt-4 px-4 py-2 bg-blue-500  rounded-lg"
                     >
                         Join Group
                     </button>
