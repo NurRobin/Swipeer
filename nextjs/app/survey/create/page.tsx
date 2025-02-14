@@ -9,7 +9,7 @@ const CreateSurveyPage: React.FC = () => {
   const [title, setTitle] = useState('');
   const [type, setType] = useState('');
   const [description, setDescription] = useState('');
-  const [duration, setDuration] = useState('');
+  const [date, setDate] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -30,12 +30,16 @@ const CreateSurveyPage: React.FC = () => {
         throw new Error('Not logged in');
       }
 
+      const selectedDate = new Date(date).toISOString();
+      const todayDate = new Date().toISOString();
+
       const data = {
         created_by: user.id,
         title,
         type,
         description,
-        duration,
+        start_at: todayDate,
+        end_at: selectedDate,
       };
 
       const createdSurvey = await pb.collection('surveys').create(data);
@@ -88,10 +92,10 @@ const CreateSurveyPage: React.FC = () => {
                 required
                 className="mt-1 block w-full rounded-md border-gray-300 auto-shadow focus:border-[var(--primary-color)] focus:ring-[var(--primary-color)] text-black"
               >
-                <option value="" disabled selected>Select survey type</option>
-                <option value="Type 1">majority</option>
-                <option value="Type 2">score</option>
-                <option value="Type 3">consensus</option>
+                <option value="" disabled>Select survey type</option>
+                <option value="majority">Majority</option>
+                <option value="score">Score</option>
+                <option value="consensus">Consensus</option>
               </select>
             </div>
             <div>
@@ -108,21 +112,21 @@ const CreateSurveyPage: React.FC = () => {
               ></textarea>
             </div>
             <div>
-              <label htmlFor="duration" className="block text-sm font-medium text-gray-700">
-                Duration (in days)
+              <label htmlFor="date" className="block text-sm font-medium text-gray-700">
+                Select Date
               </label>
               <input
-                type="number"
-                id="duration"
-                value={duration}
-                onChange={(e) => setDuration(e.target.value)}
+                type="date"
+                id="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
                 required
                 className="mt-1 block w-full rounded-md border-gray-300 auto-shadow focus:border-[var(--primary-color)] focus:ring-[var(--primary-color)] text-black"
               />
             </div>
             <button
               type="submit"
-              className="w-full py-2 px-4 bg-[var(--primary-color)]  rounded-md hover:brightness-90 transition-colors"
+              className="w-full py-2 px-4 bg-[var(--primary-color)] rounded-md hover:brightness-90 transition-colors"
             >
               Create Survey
             </button>
