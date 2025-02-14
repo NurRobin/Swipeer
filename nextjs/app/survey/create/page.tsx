@@ -149,6 +149,12 @@ const CreateSurveyPage: React.FC = () => {
             </button>
           </form>
         )}
+        <button
+          onClick={() => router.push('/')}
+          className="w-full py-2 px-4 mt-4 bg-[var(--secondary-color)] text-[var(--primary-color)] rounded-md hover:bg-[var(--primary-color)] hover:text-[var(--secondary-color)] transition-colors"
+        >
+          Back
+        </button>
       </div>
     </div>
   );
