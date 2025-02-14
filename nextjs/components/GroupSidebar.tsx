@@ -16,12 +16,7 @@ const GroupSidebar: React.FC = () => {
     const fetchGroups = async () => {
       try {
         const groups = await pb.collection('groups').getFullList();
-        const mappedGroups = groups.map((group: any) => ({
-          id: group.id,
-          name: group.name,
-          description: group.description,
-        }));
-        setGroups(mappedGroups);
+        setGroups(groups);
       } catch (err) {
         setError('Failed to fetch groups');
         console.error(err);

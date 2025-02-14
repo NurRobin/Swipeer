@@ -2,9 +2,10 @@
 'use client';
 import React, { createContext, useState, useContext, PropsWithChildren, useEffect } from 'react';
 import pb from '@/lib/pocketbase';
+import { UsersRecord } from '@/types/pocketbase-types';
 
 interface AuthContextProps {
-  user: any;
+  user: UsersRecord | null;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
 }
@@ -12,16 +13,16 @@ interface AuthContextProps {
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 
 export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<UsersRecord | null>(null);
 
   // Initialize user from auth store
   useEffect(() => {
-    setUser(pb.authStore.model);
+    setUser(pb.authStore.model as UsersRecord);
   }, []);
 
   const login = async (email: string, password: string) => {
     const authData = await pb.collection('users').authWithPassword(email, password);
-    setUser(authData);
+    setUser(authData.record as UsersRecord);
   };
 
   const logout = () => {
