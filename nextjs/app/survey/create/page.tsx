@@ -30,16 +30,33 @@ const CreateSurveyPage: React.FC = () => {
         throw new Error('Not logged in');
       }
 
-      const selectedDate = new Date(date).toISOString();
-      const todayDate = new Date().toISOString();
+      if (!title) {
+        throw new Error('Title is required');
+      }
+      if (!type) {
+        throw new Error('Type is required');
+      }
+      if (!description) {
+        throw new Error('Description is required');
+      }
+      if (!date) {
+        throw new Error('End date is required');
+      }
+
+      const selectedDate = new Date(date);
+      const todayDate = new Date();
+
+      if (selectedDate <= todayDate) {
+        throw new Error('The duration must be at least 1 day');
+      }
 
       const data = {
         created_by: user.id,
         title,
         type,
         description,
-        start_at: todayDate,
-        end_at: selectedDate,
+        start_at: todayDate.toISOString(),
+        end_at: selectedDate.toISOString(),
       };
 
       const createdSurvey = await pb.collection('surveys').create(data);
