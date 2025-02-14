@@ -4,7 +4,6 @@ import { useQuery } from "@tanstack/react-query";
 const groupQueryKey = (groupId: string) => ['group', groupId]
 
 export function useGroup(groupId: string) {
-
     return useQuery({
         queryKey: groupQueryKey(groupId),
         queryFn: async () => {
