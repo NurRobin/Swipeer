@@ -8,7 +8,7 @@ interface InviteLayoutProps {
 const InviteLayout: React.FC<InviteLayoutProps> = ({ children }) => {
     return (
         <div className="min-h-screen bg-gray-100">
-            <header className="bg-white shadow-md py-4">
+            <header className="bg-white auto-shadow py-4">
                 <div className="container mx-auto flex justify-between items-center px-4">
                     <h1 className="text-2xl font-bold text-gray-800">Swipeer</h1>
                     <nav>

@@ -18,8 +18,6 @@ const LoginForm: React.FC = () => {
     e.preventDefault();
     try {
       await login(email, password);
-      // Redirect to the dashboard or group page after successful login
-      router.push('/dashboard');
     } catch (error: any) {
       console.error('Login failed:', error);
       setErrorMessage('Invalid email or password.');
