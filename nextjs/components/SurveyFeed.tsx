@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import pb from '@/lib/pocketbase';
 import Link from 'next/link';
-import { Survey } from '@/types/pocketbase';
+import { SurveysRecord } from '@/types/pocketbase-types';
 
 const SurveyFeed: React.FC = () => {
-  const [surveys, setSurveys] = useState<Survey[]>([]);
+  const [surveys, setSurveys] = useState<SurveysRecord[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -13,19 +13,7 @@ const SurveyFeed: React.FC = () => {
         const surveys = await pb.collection('surveys').getFullList({
           sort: '-start_at',
         });
-        const mappedSurveys = surveys.map((survey: any) => ({
-          id: survey.id,
-          created: survey.created,
-          updated: survey.updated,
-          created_by: survey.created_by,
-          created_in: survey.created_in,
-          type: survey.type,
-          title: survey.title,
-          description: survey.description,
-          start_at: survey.start_at,
-          end_at: survey.end_at,
-        }));
-        setSurveys(mappedSurveys as Survey[]);
+        setSurveys(surveys);
       } catch (err) {
         setError('Failed to fetch surveys');
         console.error(err);
