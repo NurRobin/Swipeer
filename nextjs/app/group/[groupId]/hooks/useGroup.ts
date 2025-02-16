@@ -12,26 +12,22 @@ export function useGroup(groupId: string) {
                 filter: `group_id = "${groupId}"`
             });
 
-            const userPromises = members.map((member) => pb.collection('users').getOne(member.user_id));
-
-            const users = await Promise.all(userPromises);
-
-            members.forEach((member, index) => {
-                member.display_name = users[index].display_name;
-                member.role = member.role.charAt(0).toUpperCase() + member.role.slice(1);
-            });
+            const membersWithUser = await Promise.all(members.map(async (member) => {
+                const user = await pb.collection('users').getOne(member.user_id)
+                return {
+                    ...member,
+                    ...user
+                }
+            }));
 
             // Sort members by "joined_at" date
             members.sort((a, b) => new Date(a.joined_at).getTime() - new Date(b.joined_at).getTime());
-
-            console.log('Group:', group);
-            console.log('Members:', members);
 
             const user = pb.authStore.model;
             return {
                 id: group.id,
                 created_by: group.created_by,
-                members: members.map((member) => ({
+                members: membersWithUser.map((member) => ({
                     id: member.id,
                     display_name: member.display_name,
                     role: member.role,
