@@ -10,14 +10,47 @@ const CreateSurveyPage: React.FC = () => {
   const [type, setType] = useState('');
   const [description, setDescription] = useState('');
   const [date, setDate] = useState('');
+  const [group, setGroup] = useState('public');
+  const [groups, setGroups] = useState<{ id: string; name: string }[]>([]);
   const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (!pb.authStore.isValid) {
       router.push('/');
+    } else {
+      fetchUserGroups();
     }
   }, [router]);
+
+  const fetchUserGroups = async () => {
+    try {
+      const user = pb.authStore.model;
+      if (!user) {
+        throw new Error('Not logged in');
+      }
+
+      const groupMembers = await pb.collection('group_members').getFullList({
+        filter: `user_id = "${user.id}"`,
+      });
+
+      const groupIds = groupMembers.map((member: any) => member.group_id);
+      if (groupIds.length === 0) {
+        setGroups([]);
+        return;
+      }
+
+      const filterQuery = groupIds.map((id) => `id = "${id}"`).join(" || ");
+      const userGroups = await pb.collection('groups').getFullList({
+        filter: filterQuery,
+      });
+
+      setGroups(userGroups.map((group: any) => ({ id: group.id, name: group.name })));
+    } catch (error) {
+      console.error('Error fetching user groups:', error);
+      setGroups([]);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -57,12 +90,13 @@ const CreateSurveyPage: React.FC = () => {
         description,
         start_at: todayDate.toISOString(),
         end_at: selectedDate.toISOString(),
+        created_in: group === 'public' ? null : group,
       };
 
       const createdSurvey = await pb.collection('surveys').create(data);
       console.log("Survey created:", createdSurvey);
 
-      router.push(`/survey/${createdSurvey.id}`);
+      router.push(`1survey/${createdSurvey.id}`);
     } catch (error: any) {
       setErrorMessage(error.message || 'Error creating survey');
       setLoading(false);
@@ -116,6 +150,23 @@ const CreateSurveyPage: React.FC = () => {
               </select>
             </div>
             <div>
+              <label htmlFor="group" className="block text-sm font-medium text-gray-700">
+                Group
+              </label>
+              <select
+                id="group"
+                value={group}
+                onChange={(e) => setGroup(e.target.value)}
+                required
+                className="mt-1 block w-full rounded-md border-gray-300 auto-shadow focus:border-[var(--primary-color)] focus:ring-[var(--primary-color)] text-black"
+              >
+                <option value="public">Public Group</option>
+                {groups.map((group) => (
+                  <option key={group.id} value={group.id}>{group.name}</option>
+                ))}
+              </select>
+            </div>
+            <div>
               <label htmlFor="description" className="block text-sm font-medium text-gray-700">
                 Description
               </label>
@@ -130,7 +181,7 @@ const CreateSurveyPage: React.FC = () => {
             </div>
             <div>
               <label htmlFor="date" className="block text-sm font-medium text-gray-700">
-                Select Date
+                Select End-Date
               </label>
               <input
                 type="date"
