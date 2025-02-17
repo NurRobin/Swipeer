@@ -17,6 +17,7 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
   const [showModal, setShowModal] = useState(false);
   const [showLeaveModal, setShowLeaveModal] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
+  const [surveys, setSurveys] = useState<Survey[]>([]);
   const router = useRouter();
 
   useEffect(() => {
@@ -76,6 +77,14 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
           const isAdmin = members.some(member => member.user_id === user.id && member.role.toLowerCase() === 'admin');
           setIsAdmin(isAdmin);
         }
+
+        // Fetch surveys related to the group
+        const surveys = await pb.collection('surveys').getFullList({
+          filter: `created_in = "${groupId}"`
+        });
+
+        setSurveys(surveys);
+
       } catch (error) {
         if ((error as any).status === 404) {
           setError('This group could not be found or you do not have access.');
@@ -228,6 +237,17 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
           </li>
         ))}
       </ul>
+      <h2 className="text-2xl font-semibold mb-4 ">Surveys</h2>
+      <ul className="list-none pl-0">
+        {surveys.map((survey) => (
+          <li key={survey.id} className="mb-4 flex items-center bg-gray-100 p-4 rounded-lg auto-shadow">
+            <p className="text-gray-800 font-medium flex-1">{survey.title}</p>
+            <p className="text-gray-500 text-sm flex-1 text-right">
+              {new Date(survey.start_at).toLocaleDateString()} - {new Date(survey.end_at).toLocaleDateString()}
+            </p>
+          </li>
+        ))}
+      </ul>
       {leaveGroupError && (
         <div className="text-red-500 text-center mt-4">
           {leaveGroupError}
@@ -286,4 +306,17 @@ interface User {
   created: string;
   updated: string;
   joined_at: string;
+}
+
+interface Survey {
+  id: string;
+  created: string;
+  updated: string;
+  created_by: string;
+  created_in: string;
+  type: string;
+  title: string;
+  description: string;
+  start_at: string;
+  end_at: string;
 }
