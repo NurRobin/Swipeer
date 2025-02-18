@@ -17,6 +17,7 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
   const [showModal, setShowModal] = useState(false);
   const [showLeaveModal, setShowLeaveModal] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
+  const [surveys, setSurveys] = useState<SurveyWithCreator[]>([]);
   const router = useRouter();
 
   useEffect(() => {
@@ -47,7 +48,6 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
           member.role = member.role.charAt(0).toUpperCase() + member.role.slice(1);
         });
 
-        // Sort members by "joined_at" date
         members.sort((a, b) => new Date(a.joined_at).getTime() - new Date(b.joined_at).getTime());
 
         console.log('Group:', group);
@@ -76,6 +76,27 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
           const isAdmin = members.some(member => member.user_id === user.id && member.role.toLowerCase() === 'admin');
           setIsAdmin(isAdmin);
         }
+
+        const surveys = await pb.collection('surveys').getFullList({
+          filter: `created_in = "${groupId}"`
+        });
+
+        const surveyCreators = await Promise.all(surveys.map(survey => pb.collection('users').getOne(survey.created_by)));
+
+        setSurveys(surveys.map((survey, index) => ({
+          id: survey.id,
+          created: survey.created,
+          updated: survey.updated,
+          created_by: survey.created_by,
+          created_in: survey.created_in,
+          type: survey.type,
+          title: survey.title,
+          description: survey.description,
+          start_at: survey.start_at,
+          end_at: survey.end_at,
+          creator_name: surveyCreators[index].display_name,
+        })));
+
       } catch (error) {
         if ((error as any).status === 404) {
           setError('This group could not be found or you do not have access.');
@@ -204,7 +225,7 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
       {isAdmin && (
         <div className="absolute top-6 right-6 flex flex-col items-end">
           <button
-            className="py-2 px-4 bg-primary-color  font-semibold rounded-md hover:bg-secondary-color focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-color w-auto"
+            className="py-2 px-4 bg-[var(--primary-color)] font-semibold rounded-md hover:brightness-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--primary-color)] w-auto"
             onClick={() => {
               setShowModal(true);
               setMaxUses(null);
@@ -214,20 +235,41 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
           </button>
         </div>
       )}
-      <h1 className="text-4xl font-bold mb-4 ">{group?.name}</h1>
+      <h1 className="text-4xl font-bold mb-4 text-[var(--primary-color)]">{group?.name}</h1>
       <p className="text-gray-700 mb-6">{group?.description}</p>
-      <h2 className="text-2xl font-semibold mb-4 ">Members</h2>
+  
+      {/* Members List */}
+      <h2 className="text-2xl font-semibold mb-4 text-[var(--primary-color)]">Members</h2>
       <ul className="list-none pl-0">
         {group?.members.map((member) => (
           <li key={member.id} className="mb-4 flex items-center bg-gray-100 p-4 rounded-lg auto-shadow">
             <p className="text-gray-800 font-medium flex-1">{member.display_name}</p>
-            <p className="text-gray-500 text-sm flex-1 text-right">
+            <p className="text-gray-500 text-sm flex-1 text-center">
               Member since {calculateMemberSince(member.joined_at)} {calculateMemberSince(member.joined_at) === 1 ? 'day' : 'days'}
             </p>
             <span className="text-gray-600 flex-1 text-right">{member.role}</span>
           </li>
         ))}
       </ul>
+  
+      {/* Surveys List */}
+      <h2 className="text-2xl font-semibold mb-4 text-[var(--primary-color)]">Surveys</h2>
+      <ul className="list-none pl-0">
+        {surveys.map((survey) => (
+          <li
+            key={survey.id}
+            className="mb-4 flex items-center bg-gray-100 p-4 rounded-lg auto-shadow cursor-pointer hover:bg-gray-200"
+            onClick={() => router.push(`/survey/${survey.id}`)}
+          >
+            <p className="text-gray-800 font-medium flex-1">{survey.title}</p>
+            <p className="text-gray-600 text-sm flex-1 text-center">Created by {survey.creator_name}</p>
+            <p className="text-gray-600 text-sm flex-1 text-right">
+              {new Date(survey.start_at).toLocaleDateString()} - {new Date(survey.end_at).toLocaleDateString()}
+            </p>
+          </li>
+        ))}
+      </ul>
+  
       {leaveGroupError && (
         <div className="text-red-500 text-center mt-4">
           {leaveGroupError}
@@ -238,15 +280,14 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
           {feedback}
         </div>
       )}
-      <div className="mt-6 flex justify-center">
+      <div className="mt-6 flex justify-center items-center">
         <button
           onClick={() => setShowLeaveModal(true)}
-          className="w-full max-w-xs py-2 px-4 bg-primary-color  font-semibold rounded-md hover:bg-secondary-color focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-color"
+          className="w-full max-w-xs py-2 px-4 bg-[var(--primary-color)] font-semibold rounded-md hover:brightness-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--primary-color)]"
         >
           Leave group
         </button>
       </div>
-
       {showModal && (
         <InviteLinkModal
           maxUses={maxUses}
@@ -255,7 +296,6 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
           setShowModal={setShowModal}
         />
       )}
-
       {showLeaveModal && (
         <LeaveGroupModal
           handleLeaveGroup={handleLeaveGroup}
@@ -263,7 +303,7 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
         />
       )}
     </div>
-  );
+  );  
 };
 
 export default GroupPage;
@@ -286,4 +326,21 @@ interface User {
   created: string;
   updated: string;
   joined_at: string;
+}
+
+interface Survey {
+  id: string;
+  created: string;
+  updated: string;
+  created_by: string;
+  created_in: string;
+  type: string;
+  title: string;
+  description: string;
+  start_at: string;
+  end_at: string;
+}
+
+interface SurveyWithCreator extends Survey {
+  creator_name: string;
 }
