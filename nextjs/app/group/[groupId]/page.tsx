@@ -262,7 +262,7 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
             onClick={() => router.push(`/survey/${survey.id}`)}
           >
             <p className="text-gray-800 font-medium flex-1">{survey.title}</p>
-            <p className="text-gray-600 text-sm flex-1 text-center">created by {survey.creator_name}</p>
+            <p className="text-gray-600 text-sm flex-1 text-center">Created by {survey.creator_name}</p>
             <p className="text-gray-600 text-sm flex-1 text-right">
               {new Date(survey.start_at).toLocaleDateString()} - {new Date(survey.end_at).toLocaleDateString()}
             </p>
