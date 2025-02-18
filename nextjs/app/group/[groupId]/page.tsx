@@ -225,7 +225,7 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
       {isAdmin && (
         <div className="absolute top-6 right-6 flex flex-col items-end">
           <button
-            className="py-2 px-4 bg-primary-color  font-semibold rounded-md hover:bg-secondary-color focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-color w-auto"
+            className="py-2 px-4 bg-[var(--primary-color)] font-semibold rounded-md hover:brightness-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--primary-color)] w-auto"
             onClick={() => {
               setShowModal(true);
               setMaxUses(null);
@@ -235,35 +235,41 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
           </button>
         </div>
       )}
-      <h1 className="text-4xl font-bold mb-4 ">{group?.name}</h1>
+      <h1 className="text-4xl font-bold mb-4 text-[var(--primary-color)]">{group?.name}</h1>
       <p className="text-gray-700 mb-6">{group?.description}</p>
-      <h2 className="text-2xl font-semibold mb-4 ">Members</h2>
+  
+      {/* Members List */}
+      <h2 className="text-2xl font-semibold mb-4 text-[var(--primary-color)]">Members</h2>
       <ul className="list-none pl-0">
         {group?.members.map((member) => (
           <li key={member.id} className="mb-4 flex items-center bg-gray-100 p-4 rounded-lg auto-shadow">
             <p className="text-gray-800 font-medium flex-1">{member.display_name}</p>
-            <p className="text-gray-500 text-sm flex-1 text-right">
+            <p className="text-gray-500 text-sm flex-1 text-center">
               Member since {calculateMemberSince(member.joined_at)} {calculateMemberSince(member.joined_at) === 1 ? 'day' : 'days'}
             </p>
             <span className="text-gray-600 flex-1 text-right">{member.role}</span>
           </li>
         ))}
       </ul>
-      <h2 className="text-2xl font-semibold mb-4 ">Surveys</h2>
+  
+      {/* Surveys List */}
+      <h2 className="text-2xl font-semibold mb-4 text-[var(--primary-color)]">Surveys</h2>
       <ul className="list-none pl-0">
         {surveys.map((survey) => (
           <li
             key={survey.id}
-            className="mb-4 flex items-center bg-white p-4 rounded-lg shadow-md cursor-pointer hover:bg-gray-100"
-            onClick={() => router.push(`/survey/${survey.id}`)}>
+            className="mb-4 flex items-center bg-gray-100 p-4 rounded-lg auto-shadow cursor-pointer hover:bg-gray-200"
+            onClick={() => router.push(`/survey/${survey.id}`)}
+          >
             <p className="text-gray-800 font-medium flex-1">{survey.title}</p>
-            <p className="text-gray-600 text-sm">created by {survey.creator_name}</p>
+            <p className="text-gray-600 text-sm flex-1 text-center">created by {survey.creator_name}</p>
             <p className="text-gray-600 text-sm flex-1 text-right">
               {new Date(survey.start_at).toLocaleDateString()} - {new Date(survey.end_at).toLocaleDateString()}
             </p>
           </li>
         ))}
       </ul>
+  
       {leaveGroupError && (
         <div className="text-red-500 text-center mt-4">
           {leaveGroupError}
@@ -274,10 +280,10 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
           {feedback}
         </div>
       )}
-      <div className="mt-6 flex justify-center">
+      <div className="mt-6 flex justify-center items-center">
         <button
           onClick={() => setShowLeaveModal(true)}
-          className="w-full max-w-xs py-2 px-4 bg-primary-color  font-semibold rounded-md hover:bg-secondary-color focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-color"
+          className="w-full max-w-xs py-2 px-4 bg-[var(--primary-color)] font-semibold rounded-md hover:brightness-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--primary-color)]"
         >
           Leave group
         </button>
@@ -297,7 +303,7 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
         />
       )}
     </div>
-  );
+  );  
 };
 
 export default GroupPage;
