@@ -160,7 +160,7 @@ const CreateSurveyPage: React.FC = () => {
                 required
                 className="mt-1 block w-full rounded-md border-gray-300 auto-shadow focus:border-[var(--primary-color)] focus:ring-[var(--primary-color)] text-black"
               >
-                <option value="public">Public Group</option>
+                <option value="public">Make survey public</option>
                 {groups.map((group) => (
                   <option key={group.id} value={group.id}>{group.name}</option>
                 ))}
