@@ -17,7 +17,7 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
   const [showModal, setShowModal] = useState(false);
   const [showLeaveModal, setShowLeaveModal] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
-  const [surveys, setSurveys] = useState<Survey[]>([]);
+  const [surveys, setSurveys] = useState<SurveyWithCreator[]>([]);
   const router = useRouter();
 
   useEffect(() => {
@@ -81,7 +81,9 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
           filter: `created_in = "${groupId}"`
         });
 
-        setSurveys(surveys.map(survey => ({
+        const surveyCreators = await Promise.all(surveys.map(survey => pb.collection('users').getOne(survey.created_by)));
+
+        setSurveys(surveys.map((survey, index) => ({
           id: survey.id,
           created: survey.created,
           updated: survey.updated,
@@ -92,6 +94,7 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
           description: survey.description,
           start_at: survey.start_at,
           end_at: survey.end_at,
+          creator_name: surveyCreators[index].display_name,
         })));
 
       } catch (error) {
@@ -251,10 +254,11 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
         {surveys.map((survey) => (
           <li
             key={survey.id}
-            className="mb-4 flex items-center bg-gray-100 p-4 rounded-lg auto-shadow cursor-pointer hover:bg-gray-200"
+            className="mb-4 flex items-center bg-white p-4 rounded-lg shadow-md cursor-pointer hover:bg-gray-100"
             onClick={() => router.push(`/survey/${survey.id}`)}>
             <p className="text-gray-800 font-medium flex-1">{survey.title}</p>
-            <p className="text-gray-500 text-sm flex-1 text-right">
+            <p className="text-gray-600 text-sm">created by {survey.creator_name}</p>
+            <p className="text-gray-600 text-sm flex-1 text-right">
               {new Date(survey.start_at).toLocaleDateString()} - {new Date(survey.end_at).toLocaleDateString()}
             </p>
           </li>
@@ -278,7 +282,6 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
           Leave group
         </button>
       </div>
-
       {showModal && (
         <InviteLinkModal
           maxUses={maxUses}
@@ -287,7 +290,6 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
           setShowModal={setShowModal}
         />
       )}
-
       {showLeaveModal && (
         <LeaveGroupModal
           handleLeaveGroup={handleLeaveGroup}
@@ -331,4 +333,8 @@ interface Survey {
   description: string;
   start_at: string;
   end_at: string;
+}
+
+interface SurveyWithCreator extends Survey {
+  creator_name: string;
 }
