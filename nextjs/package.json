@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "gen:types": "cross-env POCKETBASE_URL=$POCKETBASE_URL ADMIN_EMAIL=$ADMIN_EMAIL ADMIN_PASSWORD=$ADMIN_PASSWORD && npx pocketbase-typegen --url $POCKETBASE_URL --email $ADMIN_EMAIL --password $ADMIN_PASSWORD --out /app/types/pocketbase-types.ts",
+    "_gen:types": "pocketbase-typegen --url $POCKETBASE_URL --email $ADMIN_EMAIL --password $ADMIN_PASSWORD --out types/pocketbase-types.ts",
+    "gen:types": "dotenv -e .env -- npm run _gen:types",
     "dev": "npm run gen:types && next dev",
     "build": "next build",
     "start": "next start",
@@ -26,7 +27,6 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
-    "cross-env": "^7.0.3",
     "dotenv-cli": "^8.0.0",
     "eslint": "^8",
     "eslint-config-next": "14.2.14",
