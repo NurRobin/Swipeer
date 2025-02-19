@@ -14,8 +14,6 @@ const HomePage: React.FC = () => {
     setShowLogin(!showLogin);
   };
 
-  return <Survey />;
-
   return (
     <div className="home-page">
       <Image src="/img/logo.png" alt="Swipeer Logo" width={120} height={120} />

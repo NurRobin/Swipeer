@@ -62,7 +62,7 @@ const SwipeableCard: React.FC<SwipeableCardProps> = ({ content, onLike, onDislik
             }}
             className="card"
         >
-            <div className="card-content">{content}</div>
+            <div className="absolute w-72 h-96 bg-red-500 text-black rounded-2xl shadow-lg flex justify-center items-center text-2xl cursor-pointer select-none">{content}</div>
         </animated.div>
     );
 };

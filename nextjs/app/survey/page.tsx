@@ -1,58 +1,58 @@
-// src/app/dashboard/page.tsx
-"use client";
-import React, {useState} from "react";
-import SwipeableCard from "@/components/SwiperCard";
-import TinderCard from "react-tinder-card";
+'use client'
 
-const Survey: React.FC = () => {
-  const [cards, setCards] = useState([
-    "Karte 1",
-    "Karte 2",
-    "Karte 3",
-    "Karte 4",
-  ]);
-  const [currentIndex, setCurrentIndex] = useState(0); // Zeigt den Index der aktuellen Karte an
+import React, { useState } from "react";
+import { motion, useAnimation } from "framer-motion";
 
-  const handleLike = (content: string) => {
-    console.log(`Liked: ${content}`);
-    moveToNextCard(); // Nach dem "Like" zur nächsten Karte wechseln
+interface TinderCardProps {
+  onSwipeRight: () => void;
+  onSwipeLeft: () => void;
+}
+
+const TinderCard: React.FC<TinderCardProps> = ({ onSwipeRight, onSwipeLeft }) => {
+  const controls = useAnimation();
+  const [initialPosition] = useState({ x: 0, y: 0 });
+
+  const handleDrag = (event: MouseEvent | TouchEvent, info: any) => {
+    const xOffset = info.offset.x;
+
+    // If drag distance in x exceeds 150, fly the card out of the view
+    if (xOffset > 150) {
+      controls.start({ x: "100vw", transition: { duration: 0.5 } });
+    } else if (xOffset < -150) {
+      controls.start({ x: "-100vw", transition: { duration: 0.5 } });
+    }
   };
 
-  const handleDislike = (content: string) => {
-    console.log(`Disliked: ${content}`);
-    moveToNextCard(); // Nach dem "Dislike" zur nächsten Karte wechseln
-  };
+  const handleDragEnd = async (event: MouseEvent | TouchEvent, info: any) => {
+    const xOffset = info.offset.x;
+    const threshold = 150;
 
-  const moveToNextCard = () => {
-    if (currentIndex < cards.length - 1) {
-      setCurrentIndex(currentIndex + 1); // Wechsle zur nächsten Karte
+    if (xOffset > threshold) {
+      controls.start({ x: "100vw", transition: { duration: 0.5 } });
+    } else if (xOffset < -threshold) {
+      controls.start({ x: "-100vw", transition: { duration: 0.5 } });
+    } else {
+      // Return card to the center if drag is below the threshold
+      await controls.start(initialPosition);
     }
   };
 
   return (
-    <div className="flex justify-center items-center h-screen relative">
-      <TinderCard
-        className="absolute w-72 h-96 bg-white text-black rounded-2xl shadow-lg flex justify-center items-center text-2xl cursor-pointer select-none"
-        onSwipe={handleLike}
-        onCardLeftScreen={() => handleDislike("fooBar")}
-        preventSwipe={["right", "left"]}
-      >
-        <p>{cards[currentIndex]}</p>
-      </TinderCard>
-    </div>
-  );
-
-  return (
-    <div className="card-container">
-      {cards[currentIndex] && (
-        <SwipeableCard
-          content={cards[currentIndex]}
-          onLike={handleLike}
-          onDislike={handleDislike}
-        />
-      )}
-    </div>
+      <div className="relative w-screen h-screen flex justify-center items-center">
+        <motion.div
+            drag
+            dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
+            dragElastic={1}
+            onDrag={handleDrag}
+            onDragEnd={handleDragEnd}
+            animate={controls}
+            initial={initialPosition}
+            className="w-72 h-96 bg-white rounded-2xl shadow-lg flex justify-center items-center text-2xl font-bold z-50"
+        >
+          Swipe Me!
+        </motion.div>
+      </div>
   );
 };
 
-export default Survey;
+export default TinderCard;
