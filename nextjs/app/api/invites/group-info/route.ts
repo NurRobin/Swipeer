@@ -1,15 +1,10 @@
 //api/invites/group-info
 import { NextRequest, NextResponse } from 'next/server';
 import pb from '@/lib/admin-pocketbase';
+import { GroupsRecord } from '@/types/pocketbase-types';
 
-interface AdvancedGroupRecord {
-    id: string;
-    created_by: string;
-    name: string;
-    description: string;
+interface AdvancedGroupRecord extends GroupsRecord {
     member_count: number;
-    created: string;
-    updated: string;
 }
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
@@ -31,13 +26,8 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         }).then(res => res.totalItems);
 
         const groupRecord: AdvancedGroupRecord = {
-            id: group.id,
-            created_by: group.created_by,
-            name: group.name,
-            description: group.description,
+            ...group,
             member_count: member_count,
-            created: group.created,
-            updated: group.updated,
         };
 
         return new NextResponse(JSON.stringify(groupRecord), {
