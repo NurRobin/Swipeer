@@ -44,7 +44,7 @@ const TinderCard: React.FC<TinderCardProps> = ({ onSwipeRight, onSwipeLeft }) =>
   };
 
   return (
-    <div className="flex flex-col items-center px-8 py-8 h-screen">
+    <div className="flex flex-col items-center px-8 py-8 h-screen overflow-hidden">
       <div className="flex justify-between items-top inline-flex mb-4 w-full">
         <span className="text-2xl font-bold">Titel der Survey</span>
         <Image src={logo} className="w-32" alt=""></Image>
@@ -70,7 +70,7 @@ const TinderCard: React.FC<TinderCardProps> = ({ onSwipeRight, onSwipeLeft }) =>
             onDragEnd={handleDragEnd}
             animate={controls}
             initial={initialPosition}
-            className="w-72 h-96 bg-white rounded-2xl shadow-lg flex justify-center items-center text-2xl font-bold z-50"
+            className="w-72 h-96 bg-white rounded-2xl text-black shadow-lg flex justify-center items-center text-2xl font-bold z-50"
         >
           Swipe Me!
         </motion.div>
