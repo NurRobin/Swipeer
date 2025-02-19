@@ -6,9 +6,9 @@
 
 :root {
   /* Light Mode Colors */
-  --primary-color: #ff625c; /* Hauptakzente */
+  --primary-color: #F26B58 ; /* Hauptakzente */
   --secondary-color: #ffbf46; /* Sekundäre Akzente */
-  --highlight-color: #56ccf2; /* Hervorhebungen */
+  --highlight-color: #4377CD; /* Hervorhebungen */
   --shadow-color: #eaeaea; /* Schatten und Trennlinien */
   --background-color: #ffffff; /* Primärer Hintergrund */
   --text-color: #333333; /* Textfarbe */
@@ -17,9 +17,9 @@
 @media (prefers-color-scheme: dark) {
   :root {
     /* Dark Mode Colors */
-    --primary-color: #ff625c;
+    --primary-color: #F26B58 ;
     --secondary-color: #ffbf46;
-    --highlight-color: #56ccf2;
+    --highlight-color: #4377CD;
     --shadow-color: #333333;
     --background-color: #121212;
     --text-color: #ffffff;
@@ -35,7 +35,7 @@
 
 body {
   font-family: "Poppins", sans-serif;
-  background-color: var(--background-color);
+  background: var(--Swipeer-gradient, linear-gradient(135deg, var(--primary-color) 0%,var(--highlight-color)  100%));
   color: var(--text-color);
 }
 
