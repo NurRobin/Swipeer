@@ -11,6 +11,8 @@ services:
       - /app/node_modules
     depends_on:
       - pocketbase
+    env_file:
+      - ./nextjs/.env
 
   pocketbase:
     image: ghcr.io/muchobien/pocketbase:latest
