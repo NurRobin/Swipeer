@@ -1,15 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import pb from '@/lib/pocketbase';
 import Link from 'next/link';
-
-interface Group {
-  id: string;
-  name: string;
-  description: string;
-}
+import { GroupsRecord } from '@/types/pocketbase-types';
 
 const GroupSidebar: React.FC = () => {
-  const [groups, setGroups] = useState<Group[]>([]);
+  const [groups, setGroups] = useState<GroupsRecord[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {

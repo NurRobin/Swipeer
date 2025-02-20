@@ -5,9 +5,10 @@ import { useRouter } from 'next/navigation';
 import '@/styles/globals.css';
 import InviteLinkModal from './components/InviteLinkModal';
 import LeaveGroupModal from './components/LeaveGroupModal';
+import { UsersRecord, GroupMembersRecord, GroupsRecord, SurveysRecord, InviteLinksRecord, GroupMembersRoleOptions} from '@/types/pocketbase-types';
 
 const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
-  const [group, setGroup] = useState<Group | null>(null);
+  const [group, setGroup] = useState<GroupsRecord | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [groupId, setGroupId] = useState<string | null>(null);
@@ -17,7 +18,8 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
   const [showModal, setShowModal] = useState(false);
   const [showLeaveModal, setShowLeaveModal] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
-  const [surveys, setSurveys] = useState<SurveyWithCreator[]>([]);
+  const [surveys, setSurveys] = useState<(SurveysRecord & { creator_name: string })[]>([]);
+  const [membersWithDisplayName, setMembersWithDisplayName] = useState<(GroupMembersRecord & { display_name: string })[]>([]);
   const router = useRouter();
 
   useEffect(() => {
@@ -34,66 +36,42 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
 
     const fetchGroup = async () => {
       try {
-        const group = await pb.collection('groups').getOne(groupId);
-        const members = await pb.collection('group_members').getFullList({
+        const group = await pb.collection('groups').getOne<GroupsRecord>(groupId);
+        const members = await pb.collection('group_members').getFullList<GroupMembersRecord>({
           filter: `group_id = "${groupId}"`
         });
 
-        const userPromises = members.map((member) => pb.collection('users').getOne(member.user_id));
+        const userPromises = members.map((member) => pb.collection('users').getOne<UsersRecord>(member.user_id));
 
         const users = await Promise.all(userPromises);
 
-        members.forEach((member, index) => {
-          member.display_name = users[index].display_name;
-          member.role = member.role.charAt(0).toUpperCase() + member.role.slice(1);
-        });
+        const membersWithDisplayName = members.map((member, index) => ({
+          ...member,
+          display_name: users[index].display_name,
+          role: member.role as GroupMembersRoleOptions,
+        }));
 
-        members.sort((a, b) => new Date(a.joined_at).getTime() - new Date(b.joined_at).getTime());
-
+        membersWithDisplayName.sort((a, b) => new Date(a.joined_at ?? 0).getTime() - new Date(b.joined_at ?? 0).getTime());
         console.log('Group:', group);
-        console.log('Members:', members);
+        console.log('Members:', membersWithDisplayName);
 
-        setGroup({
-          id: group.id,
-          created_by: group.created_by,
-          members: members.map((member) => ({
-            id: member.id,
-            display_name: member.display_name,
-            role: member.role,
-            email: member.email,
-            created: member.created,
-            updated: member.updated,
-            joined_at: member.joined_at,
-          })) as User[],
-          name: group.name,
-          description: group.description,
-          created: group.created,
-          updated: group.updated,
-        });
+        setGroup(group);
+        setMembersWithDisplayName(membersWithDisplayName);
 
-        const user = pb.authStore.model;
+        const user = pb.authStore.model as UsersRecord;
         if (user) {
-          const isAdmin = members.some(member => member.user_id === user.id && member.role.toLowerCase() === 'admin');
+          const isAdmin = membersWithDisplayName.some(member => member.user_id === user.id && member.role.toLowerCase() === 'admin');
           setIsAdmin(isAdmin);
         }
 
-        const surveys = await pb.collection('surveys').getFullList({
+        const surveys = await pb.collection('surveys').getFullList<SurveysRecord>({
           filter: `created_in = "${groupId}"`
         });
 
-        const surveyCreators = await Promise.all(surveys.map(survey => pb.collection('users').getOne(survey.created_by)));
+        const surveyCreators = await Promise.all(surveys.map(survey => pb.collection('users').getOne<UsersRecord>(survey.created_by)));
 
         setSurveys(surveys.map((survey, index) => ({
-          id: survey.id,
-          created: survey.created,
-          updated: survey.updated,
-          created_by: survey.created_by,
-          created_in: survey.created_in,
-          type: survey.type,
-          title: survey.title,
-          description: survey.description,
-          start_at: survey.start_at,
-          end_at: survey.end_at,
+          ...survey,
           creator_name: surveyCreators[index].display_name,
         })));
 
@@ -113,7 +91,7 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
 
   const handleLeaveGroup = async () => {
     try {
-      const user = pb.authStore.model;
+      const user = pb.authStore.model as UsersRecord;
       if (!user) {
         setLeaveGroupError('You are not logged in. Please log in and try again.');
         return;
@@ -121,7 +99,7 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
 
       if (!group) return;
 
-      const groupMembersRecord = await pb.collection('group_members').getFullList({
+      const groupMembersRecord = await pb.collection('group_members').getFullList<GroupMembersRecord>({
         filter: `group_id = "${groupId}"`
       });
 
@@ -147,7 +125,7 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
         } else {
           const newAdmin = groupMembersRecord
             .filter(member => member.user_id !== user.id)
-            .sort((a, b) => new Date(a.joined_at).getTime() - new Date(b.joined_at).getTime())[0];
+            .sort((a, b) => new Date(a.joined_at ?? 0).getTime() - new Date(b.joined_at ?? 0).getTime())[0];
 
           if (newAdmin) {
             await pb.collection('group_members').update(newAdmin.id, { role: 'admin' });
@@ -170,7 +148,7 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
 
   const handleGenerateInviteLink = async (isUnlimited: boolean) => {
     try {
-      const user = pb.authStore.model;
+      const user = pb.authStore.model as UsersRecord;
       if (!user) {
         throw new Error('You are not logged in. Please log in and try again.');
       }
@@ -179,7 +157,7 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
         throw new Error('Group ID is missing.');
       }
 
-      await pb.collection('invite_links').create({
+      await pb.collection('invite_links').create<InviteLinksRecord>({
         group_id: groupId,
         created_by: user.id,
         max_uses: isUnlimited ? null : maxUses ?? 1,
@@ -241,11 +219,11 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
       {/* Members List */}
       <h2 className="text-2xl font-semibold mb-4 text-[var(--primary-color)]">Members</h2>
       <ul className="list-none pl-0">
-        {group?.members.map((member) => (
+        {membersWithDisplayName.map((member) => (
           <li key={member.id} className="mb-4 flex items-center bg-gray-100 p-4 rounded-lg auto-shadow">
             <p className="text-gray-800 font-medium flex-1">{member.display_name}</p>
             <p className="text-gray-500 text-sm flex-1 text-center">
-              Member since {calculateMemberSince(member.joined_at)} {calculateMemberSince(member.joined_at) === 1 ? 'day' : 'days'}
+              Member since {member.joined_at ? calculateMemberSince(member.joined_at) : 'N/A'} {member.joined_at && calculateMemberSince(member.joined_at) === 1 ? 'day' : 'days'}
             </p>
             <span className="text-gray-600 flex-1 text-right">{member.role}</span>
           </li>
@@ -303,44 +281,7 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
         />
       )}
     </div>
-  );  
+  );
 };
 
 export default GroupPage;
-
-interface Group {
-  id: string;
-  created_by: string;
-  members: User[];
-  name: string;
-  description: string;
-  created: string;
-  updated: string;
-}
-
-interface User {
-  id: string;
-  email: string;
-  display_name: string;
-  role: string;
-  created: string;
-  updated: string;
-  joined_at: string;
-}
-
-interface Survey {
-  id: string;
-  created: string;
-  updated: string;
-  created_by: string;
-  created_in: string;
-  type: string;
-  title: string;
-  description: string;
-  start_at: string;
-  end_at: string;
-}
-
-interface SurveyWithCreator extends Survey {
-  creator_name: string;
-}

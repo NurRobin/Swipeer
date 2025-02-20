@@ -3,19 +3,8 @@
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState, useRef } from 'react';
 import pb from '@/lib/pocketbase';
+import { InviteLinksRecord } from '@/types/pocketbase-types';
 
-interface InviteRecord {
-    collectionId: string;
-    collectionName: string;
-    id: string;
-    group_id: string;
-    created_by: string;
-    max_uses: number;
-    uses: number;
-    infinite: boolean;
-    created: string;
-    updated: string;
-}
 
 interface GroupInfo {
     name: string;
@@ -27,7 +16,7 @@ const InvitePage: React.FC = () => {
     const params = useParams();
     const router = useRouter();
     const id = Array.isArray(params?.id) ? params.id[0] : params?.id;
-    const [invite, setInvite] = useState<InviteRecord | null>(null);
+    const [invite, setInvite] = useState<InviteLinksRecord | null>(null);
     const [groupInfo, setGroupInfo] = useState<GroupInfo | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [showDialog, setShowDialog] = useState(false);
@@ -38,28 +27,16 @@ const InvitePage: React.FC = () => {
         const fetchInvite = async () => {
             if (id && !hasFetched.current) {
                 try {
-                    const record = await pb.collection('invite_links').getOne(id);
-                    if (record.uses >= record.max_uses) {
+                    const inviteRecord = await pb.collection('invite_links').getOne(id);
+                    if (inviteRecord.uses >= inviteRecord.max_uses) {
                         setError('This invite has been used too many times.');
                         setLoading(false);
                         return;
                     }
-                    const inviteRecord: InviteRecord = {
-                        collectionId: record.collectionId,
-                        collectionName: record.collectionName,
-                        id: record.id,
-                        group_id: record.group_id,
-                        created_by: record.created_by,
-                        max_uses: record.max_uses,
-                        uses: record.uses,
-                        infinite: record.infinite,
-                        created: record.created,
-                        updated: record.updated,
-                    };
                     setInvite(inviteRecord);
                     hasFetched.current = true;
 
-                    const response = await fetch(`/api/invites/group-info?group_id=${record.group_id}`);
+                    const response = await fetch(`/api/invites/group-info?group_id=${inviteRecord.group_id}`);
                     if (!response.ok) {
                         throw new Error('Failed to fetch group info');
                     }

@@ -131,7 +131,7 @@ export enum SurveysTypeOptions {
 export type SurveysRecord = {
 	created?: IsoDateString
 	created_by: RecordIdString
-	created_in?: RecordIdString
+	created_in: RecordIdString
 	description?: string
 	end_at: IsoDateString
 	id: string
