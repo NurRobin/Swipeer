@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import pb from '@/lib/pocketbase';
+import { useUserGroups } from './hooks/useUserGroups';
+import { useCreateSurvey } from './hooks/useCreateSurvey';
 
 const CreateSurveyPage: React.FC = () => {
   const router = useRouter();
@@ -11,96 +12,15 @@ const CreateSurveyPage: React.FC = () => {
   const [description, setDescription] = useState('');
   const [date, setDate] = useState('');
   const [group, setGroup] = useState('public');
-  const [groups, setGroups] = useState<{ id: string; name: string }[]>([]);
-  const [errorMessage, setErrorMessage] = useState('');
-  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (!pb.authStore.isValid) {
-      router.push('/');
-    } else {
-      fetchUserGroups();
-    }
-  }, [router]);
-
-  const fetchUserGroups = async () => {
-    try {
-      const user = pb.authStore.model;
-      if (!user) {
-        throw new Error('Not logged in');
-      }
-
-      const groupMembers = await pb.collection('group_members').getFullList({
-        filter: `user_id = "${user.id}"`,
-      });
-
-      const groupIds = groupMembers.map((member: any) => member.group_id);
-      if (groupIds.length === 0) {
-        setGroups([]);
-        return;
-      }
-
-      const filterQuery = groupIds.map((id) => `id = "${id}"`).join(" || ");
-      const userGroups = await pb.collection('groups').getFullList({
-        filter: filterQuery,
-      });
-
-      setGroups(userGroups.map((group: any) => ({ id: group.id, name: group.name })));
-    } catch (error) {
-      console.error('Error fetching user groups:', error);
-      setGroups([]);
-    }
-  };
+  const userGroupsQuery = useUserGroups()
+  const createSurveyMutation = useCreateSurvey()
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setErrorMessage('');
-    setLoading(true);
-
-    try {
-      const user = pb.authStore.model;
-      if (!user) {
-        throw new Error('Not logged in');
-      }
-
-      if (!title) {
-        throw new Error('Title is required');
-      }
-      if (!type) {
-        throw new Error('Type is required');
-      }
-      if (!description) {
-        throw new Error('Description is required');
-      }
-      if (!date) {
-        throw new Error('End date is required');
-      }
-
-      const selectedDate = new Date(date);
-      const todayDate = new Date();
-
-      if (selectedDate <= todayDate) {
-        throw new Error('The duration must be at least 1 day');
-      }
-
-      const data = {
-        created_by: user.id,
-        title,
-        type,
-        description,
-        start_at: todayDate.toISOString(),
-        end_at: selectedDate.toISOString(),
-        created_in: group === 'public' ? null : group,
-      };
-
-      const createdSurvey = await pb.collection('surveys').create(data);
-      console.log("Survey created:", createdSurvey);
-
-      router.push(`1survey/${createdSurvey.id}`);
-    } catch (error: any) {
-      setErrorMessage(error.message || 'Error creating survey');
-      setLoading(false);
-    }
+    createSurveyMutation.mutate({
+      title, type, description, date, group
+    })
   };
 
   return (
@@ -109,10 +29,13 @@ const CreateSurveyPage: React.FC = () => {
         <h1 className="text-2xl font-bold text-center text-[var(--primary-color)] mb-6">
           Create Survey
         </h1>
-        {errorMessage && (
-          <p className="text-red-500 text-center mb-4">{errorMessage}</p>
+        {userGroupsQuery.error?.message && (
+          <p className="text-red-500 text-center mb-4">{userGroupsQuery.error.message}</p>
         )}
-        {loading ? (
+        {createSurveyMutation.error?.message && (
+          <p className="text-red-500 text-center mb-4">{createSurveyMutation.error.message}</p>
+        )}
+        {createSurveyMutation.isPending ? (
           <div className="flex flex-col items-center justify-center space-y-4">
             <div className="spinner border-4 border-t-[var(--primary-color)] border-gray-200 rounded-full w-16 h-16 animate-spin"></div>
             <p className="text-gray-700">Creating survey...</p>
@@ -161,7 +84,7 @@ const CreateSurveyPage: React.FC = () => {
                 className="mt-1 block w-full rounded-md border-gray-300 auto-shadow focus:border-[var(--primary-color)] focus:ring-[var(--primary-color)] text-black"
               >
                 <option value="public">Make survey public</option>
-                {groups.map((group) => (
+                {userGroupsQuery.data?.map((group) => (
                   <option key={group.id} value={group.id}>{group.name}</option>
                 ))}
               </select>

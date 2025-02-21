@@ -1,28 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import pb from '@/lib/pocketbase';
+import React from 'react';
 import Link from 'next/link';
-import { GroupsRecord } from '@/types/pocketbase-types';
+import { useGroups } from '@/hooks/useGroups';
 
 const GroupSidebar: React.FC = () => {
-  const [groups, setGroups] = useState<GroupsRecord[]>([]);
-  const [error, setError] = useState<string | null>(null);
+  const groupsQuery = useGroups()
 
-  useEffect(() => {
-    const fetchGroups = async () => {
-      try {
-        const groups = await pb.collection('groups').getFullList();
-        setGroups(groups);
-      } catch (err) {
-        setError('Failed to fetch groups');
-        console.error(err);
-      }
-    };
-
-    fetchGroups();
-  }, []);
-
-  if (error) {
-    return <div className="p-4 bg-red-100 text-red-800 rounded-lg auto-shadow">{error}</div>;
+  if (groupsQuery.error) {
+    return <div className="p-4 bg-red-100 text-red-800 rounded-lg auto-shadow">{groupsQuery.error.message}</div>;
   }
 
   return (
@@ -32,7 +16,7 @@ const GroupSidebar: React.FC = () => {
           + Create Group
         </button>
       </Link>
-      {groups.map((group) => (
+      {groupsQuery.data?.map((group) => (
         <Link key={group.id} href={`/group/${group.id}`}>
           <div className="cursor-pointer p-4 mb-4 rounded-lg hover:auto-shadow transition">
             <h3 className="text-lg font-bold text-[var(--primary-color)]">{group.name}</h3>

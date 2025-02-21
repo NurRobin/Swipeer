@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import React, { PropsWithChildren } from 'react';
 import { AuthProvider } from '../contexts/AuthContext';
 import '../styles/globals.css';
+import QueryProvider from "@/contexts/QueryContext";
 
 export const metadata: Metadata = {
   title: "Swipeer",
@@ -21,7 +22,11 @@ const RootLayout: React.FC<PropsWithChildren> = ({ children }) => (
       />
     </head>
     <body>
-      <AuthProvider>{children}</AuthProvider>
+      <QueryProvider>
+        <AuthProvider>
+          {children}
+        </AuthProvider>
+      </QueryProvider>
     </body>
   </html>
 );

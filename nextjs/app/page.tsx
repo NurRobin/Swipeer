@@ -1,12 +1,13 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import pb from '@/lib/pocketbase';
-import LoginRegister from '@/components/LoginRegister';
 import HomeContent from '@/components/HomeContent';
+import { useRouter } from 'next/navigation';
 
 const HomePage: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(pb.authStore.isValid);
   const [loaded, setLoaded] = useState(false);
+  const router = useRouter()
 
   useEffect(() => {
     pb.collection('users')
@@ -17,9 +18,16 @@ const HomePage: React.FC = () => {
 
     const unsubscribe = pb.authStore.onChange(() =>
       setIsAuthenticated(pb.authStore.isValid)
+    
     );
     return () => unsubscribe();
   }, []);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.push('/login')
+    }
+  }, [isAuthenticated, router])
 
   if (!loaded) {
     return (
@@ -44,7 +52,7 @@ const HomePage: React.FC = () => {
     );
   }
 
-  return <div>{isAuthenticated ? <HomeContent /> : <LoginRegister />}</div>;
+  return <div>{isAuthenticated && <HomeContent />}</div>;
 };
 
 export default HomePage;

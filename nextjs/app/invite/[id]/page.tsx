@@ -1,106 +1,32 @@
 'use client';
 
-import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState, useRef } from 'react';
-import pb from '@/lib/pocketbase';
-import { InviteLinksRecord } from '@/types/pocketbase-types';
+import { useParams } from 'next/navigation';
+import { useState } from 'react';
+import { useInviteLinkGroupInfo } from './hooks/useInviteLinkGroupInfo';
+import { useJoinGroup } from './hooks/useJoinGroup';
 
-
-interface GroupInfo {
-    name: string;
-    description: string;
-    member_count: number;
-}
 
 const InvitePage: React.FC = () => {
-    const params = useParams();
-    const router = useRouter();
-    const id = Array.isArray(params?.id) ? params.id[0] : params?.id;
-    const [invite, setInvite] = useState<InviteLinksRecord | null>(null);
-    const [groupInfo, setGroupInfo] = useState<GroupInfo | null>(null);
+    const params = useParams<{ id: string }>();
     const [error, setError] = useState<string | null>(null);
-    const [showDialog, setShowDialog] = useState(false);
-    const [loading, setLoading] = useState(true);
-    const hasFetched = useRef(false);
-
-    useEffect(() => {
-        const fetchInvite = async () => {
-            if (id && !hasFetched.current) {
-                try {
-                    const inviteRecord = await pb.collection('invite_links').getOne(id);
-                    if (inviteRecord.uses >= inviteRecord.max_uses) {
-                        setError('This invite has been used too many times.');
-                        setLoading(false);
-                        return;
-                    }
-                    setInvite(inviteRecord);
-                    hasFetched.current = true;
-
-                    const response = await fetch(`/api/invites/group-info?group_id=${inviteRecord.group_id}`);
-                    if (!response.ok) {
-                        throw new Error('Failed to fetch group info');
-                    }
-                    const data = await response.json();
-                    setGroupInfo(data);
-                    setShowDialog(true);
-                } catch (error) {
-                    console.error('Error fetching invite:', error);
-                    setError('This invite does not exist.');
-                } finally {
-                    setLoading(false);
-                }
-            }
-        };
-
-        fetchInvite();
-    }, [id]);
+    const inviteLinkGroupQuery = useInviteLinkGroupInfo(params.id)
+    const joinGroupMutation = useJoinGroup(params.id)
 
     const handleJoinGroup = async () => {
-        if (!invite) return;
-
-        if (!pb.authStore.isValid) {
-            router.push(`/login?callbackUrl=/invite/${id}`);
-            return;
-        }
-
-        try {
-            const response = await fetch('/api/invites/join', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ invite_id: invite.id, group_id: invite.group_id, user_id: pb.authStore.model?.id }),
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || 'Failed to join group');
-            }
-
-            const result = await response.json();
-            if (result.success) {
-                router.push(`/group/${invite.group_id}`);
-            } else {
-                throw new Error(result.error || 'Failed to join group');
-            }
-        } catch (error) {
-            console.error('Error joining group:', error);
-            if (error instanceof Error) {
-                setError(error.message);
-            } else {
-                setError('An unknown error occurred');
-            }
+        const invite = inviteLinkGroupQuery.data?.invite
+        if (invite) {
+            joinGroupMutation.mutate({ invite })
         }
     };
 
     return (
         <div className="flex items-center justify-center min-h-screen p-4">
-            {loading && (
+            {inviteLinkGroupQuery.isLoading && (
                 <div className="text-center">
                     <p>Loading...</p>
                 </div>
             )}
-            {!loading && error && (
+            {!inviteLinkGroupQuery.isLoading && error && (
                 <div className="bg-white p-6 rounded-lg text-center">
                     <p className="text-red-500">{error}</p>
                     <button
@@ -111,11 +37,11 @@ const InvitePage: React.FC = () => {
                     </button>
                 </div>
             )}
-            {!loading && !error && invite && groupInfo && (
+            {!inviteLinkGroupQuery.isLoading && !error && inviteLinkGroupQuery.data?.invite && inviteLinkGroupQuery.data?.groupInfo && (
                 <div className="bg-white p-6 rounded-lg text-center">
-                    <h2 className="text-2xl font-bold">{groupInfo.name}</h2>
-                    <p className="mt-2">{groupInfo.description}</p>
-                    <p className="mt-2">Members: {groupInfo.member_count}</p>
+                    <h2 className="text-2xl font-bold">{inviteLinkGroupQuery.data?.groupInfo.name}</h2>
+                    <p className="mt-2">{inviteLinkGroupQuery.data?.groupInfo.description}</p>
+                    <p className="mt-2">Members: {inviteLinkGroupQuery.data?.groupInfo.member_count}</p>
                     <button
                         onClick={handleJoinGroup}
                         className="mt-4 px-4 py-2 bg-blue-500  rounded-lg"

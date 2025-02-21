@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 interface InviteLinkModalProps {
   maxUses: number | null;
   setMaxUses: (value: number | null) => void;
-  handleGenerateInviteLink: (isUnlimited: boolean) => Promise<void>;
+  handleGenerateInviteLink: (isUnlimited: boolean) => Promise<unknown>;
   setShowModal: (value: boolean) => void;
 }
 
