@@ -3,8 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "gen:types": "set -o allexport && source /app/.env && set +o allexport && npx pocketbase-typegen --url $POCKETBASE_URL --email $ADMIN_EMAIL --password $ADMIN_PASSWORD --out /app/types/pocketbase-types.ts",
-    "dev": "npm run gen:types && next dev -p 8080",
+    "_gen:types": "cross-env-shell \"pocketbase-typegen --url $POCKETBASE_URL --email $ADMIN_EMAIL --password $ADMIN_PASSWORD --out types/pocketbase-types.ts\"",
+    "gen:types": "dotenv -e .env -- npm run _gen:types",
+    "dev": "npm run gen:types && next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -14,6 +15,7 @@
     "@tanstack/react-query": "^5.66.0",
     "@use-gesture/react": "^10.3.1",
     "autoprefixer": "^10.4.20",
+    "cross-env": "^7.0.3",
     "dotenv": "^16.4.7",
     "next": "^15.1.6",
     "pocketbase": "^0.21.5",

@@ -99,7 +99,7 @@ const CreateGroupPage: React.FC = () => {
                 value={groupName}
                 onChange={(e) => setGroupName(e.target.value)}
                 required
-                className="mt-1 block w-full rounded-md border-gray-300 auto-shadow focus:border-[var(--primary-color)] focus:ring-[var(--primary-color)]"
+                className="mt-1 block w-full rounded-md border-gray-300 auto-shadow focus:border-[var(--primary-color)] focus:ring-[var(--primary-color)] text-black"
               />
             </div>
             <div>
@@ -112,7 +112,7 @@ const CreateGroupPage: React.FC = () => {
                 onChange={(e) => setGroupDescription(e.target.value)}
                 required
                 rows={4}
-                className="mt-1 block w-full rounded-md border-gray-300 auto-shadow focus:border-[var(--primary-color)] focus:ring-[var(--primary-color)]"
+                className="mt-1 block w-full rounded-md border-gray-300 auto-shadow focus:border-[var(--primary-color)] focus:ring-[var(--primary-color)] text-black"
               ></textarea>
             </div>
             <button
