@@ -18,14 +18,14 @@ const TinderCard: React.FC<TinderCardProps> = ({ onSwipeRight, onSwipeLeft }) =>
   const controls = useAnimation();
   const [initialPosition] = useState({ x: 0, y: 0 });
 
-  const handleDrag = (event: MouseEvent | TouchEvent, info: any) => {
+  const handleDrag = async (event: MouseEvent | TouchEvent, info: any) => {
     const xOffset = info.offset.x;
 
     // If drag distance in x exceeds 150, fly the card out of the view
     if (xOffset > 150) {
-      controls.start({ x: "100vw", transition: { duration: 0.5 } });
+      await controls.start({x: "100vw", transition: {duration: 0.5}});
     } else if (xOffset < -150) {
-      controls.start({ x: "-100vw", transition: { duration: 0.5 } });
+      await controls.start({x: "-100vw", transition: {duration: 0.5}});
     }
   };
 
@@ -34,11 +34,12 @@ const TinderCard: React.FC<TinderCardProps> = ({ onSwipeRight, onSwipeLeft }) =>
     const threshold = 150;
 
     if (xOffset > threshold) {
-      controls.start({ x: "100vw", transition: { duration: 0.5 } });
+      await controls.start({x: "100vw", transition: {duration: 0.5}});
+      controls.set(initialPosition);
     } else if (xOffset < -threshold) {
-      controls.start({ x: "-100vw", transition: { duration: 0.5 } });
-    } else {
-      // Return card to the center if drag is below the threshold
+      await controls.start({x: "-100vw", transition: {duration: 0.5}});
+      controls.set(initialPosition);
+    }else{
       await controls.start(initialPosition);
     }
   };
@@ -88,12 +89,12 @@ const TinderCard: React.FC<TinderCardProps> = ({ onSwipeRight, onSwipeLeft }) =>
             <path
               d="M3 3.34131L39 39.3413"
               stroke="white"
-              stroke-width="7.74194"
+              strokeWidth="7.74194"
             />
             <path
               d="M3 39.3413L39 3.34131"
               stroke="white"
-              stroke-width="7.74194"
+              strokeWidth="7.74194"
             />
           </svg>
         </div>
@@ -108,7 +109,7 @@ const TinderCard: React.FC<TinderCardProps> = ({ onSwipeRight, onSwipeLeft }) =>
             <path
               d="M4 22.3448L15.122 36L42 3"
               stroke="white"
-              stroke-width="8"
+              strokeWidth="8"
             />
           </svg>
         </div>
