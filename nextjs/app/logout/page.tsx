@@ -15,7 +15,7 @@ export default function LogoutPage() {
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-black-100">
-            <p className='text-white'>Logging out...</p>
+            <p className=''>Logging out...</p>
         </div>
     );
 }

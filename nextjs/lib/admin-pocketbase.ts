@@ -1,5 +1,6 @@
-// lib/admin-pocketbase.js
+// lib/admin-pocketbase.ts
 import PocketBase from 'pocketbase';
+import { TypedPocketBase } from '@/types/pocketbase-types';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -8,10 +9,10 @@ dotenv.config();
 const pocketbase_url = 'https://data.swipeer.de';
 console.debug('Loaded Admin-PocketBase with URL:', pocketbase_url);
 
-const pb = new PocketBase(pocketbase_url);
+const pb = new PocketBase(pocketbase_url) as TypedPocketBase;
 
 // Auto-Cancellation deaktivieren
-pb.autoCancellation = false;
+pb.autoCancellation(false);
 
 // Admin-Zugangsdaten
 const adminEmail = process.env.ADMIN_EMAIL;

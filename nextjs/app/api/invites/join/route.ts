@@ -33,6 +33,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         await pb.collection('group_members').create({
             group_id: group_id,
             user_id: user_id,
+            role: 'contributor',
         });
         console.log(`User ${user_id} added to group ${group_id}`);
 
