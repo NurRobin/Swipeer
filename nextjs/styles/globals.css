@@ -7,12 +7,12 @@
 /* Color & Design Variables */
 :root {
   /* Light Mode Colors */
-  --primary-color: #ff6969;      /* Firmenfarbe, Hauptakzent */
-  --secondary-color: #333333;    /* Gut lesbar auf weiß; als Textfarbe für Akzente */
-  --highlight-color: #ff6969;    /* Akzentfarbe – kann z. B. für Links verwendet werden */
-  --shadow-color: #eaeaea;       /* Schatten und Trennlinien */
-  --background-color: #ffffff;   /* Primärer Hintergrund */
-  --text-color: #333333;         /* Standard-Textfarbe */
+  --primary-color: #F26B58 ; /* Hauptakzente */
+  --secondary-color: #ffbf46; /* Sekundäre Akzente */
+  --highlight-color: #4377CD; /* Hervorhebungen */
+  --shadow-color: #eaeaea; /* Schatten und Trennlinien */
+  --background-color: #ffffff; /* Primärer Hintergrund */
+  --text-color: #333333; /* Textfarbe */
   --border-radius: 4px;
   --transition-speed: 0.3s;
 }
@@ -20,9 +20,9 @@
 @media (prefers-color-scheme: dark) {
   :root {
     /* Dark Mode Colors */
-    --primary-color: #ff6969;
-    --secondary-color: #f5f5f5;   /* Hell, damit auf dunklem Hintergrund gut lesbar */
-    --highlight-color: #ff6969;
+    --primary-color: #F26B58 ;
+    --secondary-color: #ffbf46;
+    --highlight-color: #4377CD;
     --shadow-color: #333333;
     --background-color: #121212;
     --text-color: #ffffff;
@@ -34,7 +34,11 @@ html, body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  background-color: var(--background-color);
+}
+
+body {
+  font-family: "Poppins", sans-serif;
+  background: var(--Swipeer-gradient, linear-gradient(135deg, var(--primary-color) 0%,var(--highlight-color)  100%));
   color: var(--text-color);
   font-family: "Poppins", sans-serif;
   line-height: 1.6;
