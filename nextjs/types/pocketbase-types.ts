@@ -128,13 +128,14 @@ export enum SurveysTypeOptions {
 	"score" = "score",
 	"consensus" = "consensus",
 }
-export type SurveysRecord = {
+export type SurveysRecord<Toptions = unknown> = {
 	created?: IsoDateString
 	created_by: RecordIdString
 	created_in: RecordIdString
 	description?: string
 	end_at: IsoDateString
 	id: string
+	options: null | Toptions
 	start_at: IsoDateString
 	title: string
 	type: SurveysTypeOptions
@@ -155,6 +156,7 @@ export type UsersRecord = {
 
 export type VotesRecord = {
 	id: string
+	options_id: string
 	pro?: boolean
 	survey_id: RecordIdString
 	updated?: IsoDateString
@@ -171,7 +173,7 @@ export type SuperusersResponse<Texpand = unknown> = Required<SuperusersRecord> &
 export type GroupMembersResponse<Texpand = unknown> = Required<GroupMembersRecord> & BaseSystemFields<Texpand>
 export type GroupsResponse<Texpand = unknown> = Required<GroupsRecord> & BaseSystemFields<Texpand>
 export type InviteLinksResponse<Texpand = unknown> = Required<InviteLinksRecord> & BaseSystemFields<Texpand>
-export type SurveysResponse<Texpand = unknown> = Required<SurveysRecord> & BaseSystemFields<Texpand>
+export type SurveysResponse<Toptions = unknown, Texpand = unknown> = Required<SurveysRecord<Toptions>> & BaseSystemFields<Texpand>
 export type UsersResponse<Texpand = unknown> = Required<UsersRecord> & AuthSystemFields<Texpand>
 export type VotesResponse<Texpand = unknown> = Required<VotesRecord> & BaseSystemFields<Texpand>
 

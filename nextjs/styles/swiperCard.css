@@ -1,26 +1,172 @@
-.card-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    position: relative;
+.swipe-container {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  perspective: 1000px;
+  padding: 1rem 0;
 }
 
-.card {
-    position: absolute;
-    width: 300px;
-    height: 400px;
-    background-color: #ffaaaa;
-    border-radius: 20px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 24px;
-    cursor: pointer;
-    user-select: none;
+.swipe-card {
+  background-color: var(--background-primary);
+  border-radius: var(--border-radius-lg);
+  box-shadow: 0 10px 30px var(--shadow-color);
+  overflow: hidden;
+  width: 100%;
+  height: auto;
+  min-height: 350px;
+  position: relative;
+  touch-action: none;
+  user-select: none;
+  will-change: transform;
+  cursor: grab;
+}
+
+.swipe-card:active {
+  cursor: grabbing;
 }
 
 .card-content {
-    font-size: 24px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--background-tertiary);
+}
+
+.card-body {
+  flex-grow: 1;
+  padding: 1rem 0;
+}
+
+.card-image-container {
+  width: 100%;
+  height: 200px;
+  position: relative;
+  overflow: hidden;
+  margin: 1rem 0;
+  border-radius: var(--border-radius-md);
+}
+
+.card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.3s ease;
+}
+
+.card-description {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+}
+
+/* Swipe buttons at the bottom of the card */
+.swipe-buttons-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  margin-top: 1.5rem;
+}
+
+.swipe-button {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  border: none;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.swipe-button:hover {
+  transform: scale(1.1);
+}
+
+.swipe-button-no {
+  background-color: var(--accent-color-1);
+  color: white;
+}
+
+.swipe-button-yes {
+  background-color: var(--accent-color-2);
+  color: white;
+}
+
+/* Swipe indicators */
+.swipe-indicator {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 2.5rem;
+  font-weight: bold;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  z-index: 100;
+}
+
+.swipe-like {
+  right: 10%;
+  background-color: var(--accent-color-2);
+  border: 3px solid white;
+}
+
+.swipe-nope {
+  left: 10%;
+  background-color: var(--accent-color-1);
+  border: 3px solid white;
+}
+
+/* Responsive design */
+@media (max-width: 480px) {
+  .swipe-card {
+    min-height: 300px;
+  }
+  
+  .swipe-button {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .swipe-indicator {
+    width: 60px;
+    height: 60px;
+  }
+}
+
+/* Animation for entering cards */
+@keyframes cardEnter {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.swipe-card {
+  animation: cardEnter 0.3s ease-out;
 }
