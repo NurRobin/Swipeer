@@ -134,7 +134,7 @@ const CreateGroupPage: React.FC = () => {
                   onChange={(e) => setGroupDescription(e.target.value)}
                   required
                   rows={4}
-                  placeholder="Grppenbeschriebung"
+                  placeholder="Gruppenbeschreibung"
                   className="pl-10 block w-full rounded-lg border border-[var(--background-tertiary)] bg-[var(--background-secondary)] text-[var(--text-primary)] py-3 px-4 shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] focus:border-transparent transition-all duration-200"
                 ></textarea>
               </div>
