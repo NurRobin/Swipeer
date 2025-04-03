@@ -1,6 +1,4 @@
 // src/app/dashboard/page.tsx
-
-/*
 "use client";
 import SwipeableCard from "@/components/SwiperCard";
 import logo from "@/assets/logo.png";
@@ -123,6 +121,3 @@ const TinderCard: React.FC<TinderCardProps> = ({ onSwipeRight, onSwipeLeft }) =>
 };
 
 export default TinderCard;
-
-
- */

@@ -13,7 +13,8 @@ export function useCreateSurvey() {
             type?: string,
             description?: string,
             date?: string,
-            group?: string
+            group?: string,
+            questions: Array<string>
         }) => {
             const user = pb.authStore.model;
             if (!user) {
@@ -32,6 +33,9 @@ export function useCreateSurvey() {
             if (!params.date) {
                 throw new Error('End date is required');
             }
+            if (params.questions.length < 1) {
+                throw new Error('Questions must not be empty');
+            }
 
             const selectedDate = new Date(params.date);
             const todayDate = new Date();
@@ -48,6 +52,7 @@ export function useCreateSurvey() {
                 start_at: todayDate.toISOString(),
                 end_at: selectedDate.toISOString(),
                 created_in: params.group === 'public' ? null : params.group,
+                ///TODO: push questions
             };
 
             return await pb.collection('surveys').create(data);
