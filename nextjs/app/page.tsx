@@ -18,7 +18,7 @@ const HomePage: React.FC = () => {
 
     const unsubscribe = pb.authStore.onChange(() =>
       setIsAuthenticated(pb.authStore.isValid)
-    
+
     );
     return () => unsubscribe();
   }, []);
