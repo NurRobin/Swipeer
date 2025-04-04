@@ -44,6 +44,10 @@ export function useCreateSurvey() {
                 throw new Error('The duration must be at least 1 day');
             }
 
+            const optionData = convertArrayToMap(params.questions);
+
+            console.log(optionData);
+
             const data = {
                 created_by: user.id,
                 title: params.title,
@@ -52,14 +56,28 @@ export function useCreateSurvey() {
                 start_at: todayDate.toISOString(),
                 end_at: selectedDate.toISOString(),
                 created_in: params.group === 'public' ? null : params.group,
-                ///TODO: push questions
+                options: optionData
             };
 
             return await pb.collection('surveys').create(data);
         },
         onSuccess: (createdSurvey) => {
             console.log("Survey created:", createdSurvey);
-            router.push(`survey/${createdSurvey.id}`);
+            router.push(`${createdSurvey.id}`);
         }
     })
+}
+
+function generateRandomId(): string {
+    return Math.random().toString(36).substr(2, 9);
+}
+
+// Funktion, die einen Array von Strings empfängt und in die gewünschte Map umwandelt
+function convertArrayToMap(questions: string[]): Record<string, { question: string }> {
+    const result: Record<string, { question: string }> = {};
+    questions.forEach((question) => {
+        const randomId = generateRandomId();
+        result[randomId] = { question };
+    });
+    return result;
 }
